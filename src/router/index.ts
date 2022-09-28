@@ -106,6 +106,14 @@ const routes:RouteRecordRaw[] = [
                     permiss: '9'
                 },
                 component: () => import (/* webpackChunkName: "markdown" */ '../views/markdown.vue')
+            }, {
+                path: "/websitetable",
+                name: "websitetable",
+                meta: {
+                    title: '常用网站',
+                    permiss: '2'
+                },
+                component: () => import ( /* webpackChunkName: "websitetable" */ "../views/website/websitetable.vue")
             }
         ]
     }, {

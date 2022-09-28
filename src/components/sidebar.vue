@@ -132,6 +132,19 @@ const items = [
 		index: '/donate',
 		title: '支持作者',
 		permiss: '14'
+	},
+	{
+		icon: 'Edit',
+		index: 'website',
+		title: '网站导航',
+		permiss: '4',
+		subs: [
+			{
+				index: '/websitetable',
+				title: '常用网站',
+				permiss: '5'
+			}
+		]
 	}
 ];
 
