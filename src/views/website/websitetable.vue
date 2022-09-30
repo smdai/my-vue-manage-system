@@ -5,7 +5,15 @@
 				<el-input v-model="query.websiteUrl" placeholder="网站地址" class="handle-input mr10"></el-input>
 				<el-input v-model="query.websiteName" placeholder="网站名称" class="handle-input mr10"></el-input>
 				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" :icon="Plus">新增</el-button>
+				<el-button type="primary" @click="clearQuery">
+					<el-icon>
+						<Switch />
+					</el-icon>
+					重置
+				</el-button>
+			</div>
+			<div class="handle-box">
+				<el-button type="primary" :icon="Plus" @click="add">新增</el-button>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
@@ -33,11 +41,11 @@
 		<!-- 编辑弹出框 -->
 		<el-dialog title="编辑" v-model="editVisible" width="30%">
 			<el-form label-width="70px">
-				<el-form-item label="用户名">
-					<el-input v-model="form.name"></el-input>
+				<el-form-item label="网站地址">
+					<el-input v-model="form.websiteUrl"></el-input>
 				</el-form-item>
-				<el-form-item label="地址">
-					<el-input v-model="form.address"></el-input>
+				<el-form-item label="网站名称">
+					<el-input v-model="form.websiteName"></el-input>
 				</el-form-item>
 			</el-form>
 			<template #footer>
@@ -51,10 +59,10 @@
 </template>
 
 <script setup lang="ts" name="basetable">
-import { ref, reactive } from 'vue';
+import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-import { fetchData } from '../../api/websiteapi';
+import { Delete, Edit, Search, Plus, Refresh } from '@element-plus/icons-vue';
+import { fetchData, insert } from '../../api/websiteapi';
 
 interface TableItem {
 	id: number;
@@ -75,7 +83,7 @@ const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
 	fetchData(
-		'pageIndex=' + query.pageIndex + '&pageSize=' + query.pageSize
+		JSON.stringify(query)
 	).then(res => {
 		tableData.value = res.data.data;
 		pageTotal.value = res.data.total;
@@ -87,6 +95,20 @@ getData();
 const handleSearch = () => {
 	query.pageIndex = 1;
 	getData();
+};
+// 重置操作
+const clearQuery = () => {
+	query.websiteUrl = '';
+	query.websiteName = '';
+	query.pageIndex = 1;
+	getData();
+};
+//新增操作
+const add = () => {
+	editVisible.value = true;
+	form.websiteUrl = '';
+	form.websiteName = '';
+	insertOrUpdate.value = '1';
 };
 // 分页导航
 const handlePageChange = (val: number) => {
@@ -109,23 +131,34 @@ const handleDelete = (index: number) => {
 
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
+const insertOrUpdate = ref('')
 let form = reactive({
-	name: '',
-	address: ''
+	websiteUrl: '',
+	websiteName: ''
 });
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
 	idx = index;
-	form.name = row.name;
-	form.address = row.address;
+	form.websiteUrl = row.websiteUrl;
+	form.websiteName = row.websiteName;
 	editVisible.value = true;
+	insertOrUpdate.value = '2';
 };
 const saveEdit = () => {
+	if (insertOrUpdate.value === '1') {
+		insert(
+			form
+		).then(res => {
+			if(res.data.code === 200 ){
+				ElMessage.success('新增成功');
+			}else{
+				ElMessage.error('新增失败')
+			}
+		});
+	}
 	editVisible.value = false;
-	ElMessage.success(`修改第 ${idx + 1} 行成功`);
-	tableData.value[idx].websiteUrl = form.name;
-	tableData.value[idx].websiteName = form.address;
 };
+
 </script>
 
 <style scoped>
