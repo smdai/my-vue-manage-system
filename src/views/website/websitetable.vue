@@ -152,7 +152,7 @@ const saveEdit = () => {
 			if(res.data.code === 200 ){
 				ElMessage.success('新增成功');
 			}else{
-				ElMessage.error('新增失败')
+				ElMessage.error('新增失败，失败原因：'+res.data.message)
 			}
 		});
 	}
