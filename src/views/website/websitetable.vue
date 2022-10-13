@@ -63,6 +63,9 @@ import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, Refresh } from '@element-plus/icons-vue';
 import { fetchData, insert } from '../../api/websiteapi';
+import { errorInfo } from '../../constants/error';
+import {  inject } from 'vue-demi';
+const reload = inject('reload');
 
 interface TableItem {
 	id: number;
@@ -149,10 +152,11 @@ const saveEdit = () => {
 		insert(
 			form
 		).then(res => {
-			if(res.data.code === 200 ){
+			if (res.data.code === 200) {
 				ElMessage.success('新增成功');
-			}else{
-				ElMessage.error('新增失败，失败原因：'+res.data.message)
+				reload();
+			} else {
+				ElMessage.error(errorInfo.addError)
 			}
 		});
 	}
