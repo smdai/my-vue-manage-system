@@ -26,7 +26,7 @@
 						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.$index)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row)" v-permiss="16">
 							删除
 						</el-button>
 					</template>
@@ -41,6 +41,9 @@
 		<!-- 编辑弹出框 -->
 		<el-dialog title="编辑" v-model="editVisible" width="30%">
 			<el-form label-width="70px">
+				<el-form-item label="id" v-if="false">
+					<el-input v-model="form.id" disabled></el-input>
+				</el-form-item>
 				<el-form-item label="网站地址">
 					<el-input v-model="form.websiteUrl"></el-input>
 				</el-form-item>
@@ -61,11 +64,11 @@
 <script setup lang="ts" name="basetable">
 import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus, Refresh } from '@element-plus/icons-vue';
-import { fetchData, insert } from '../../api/websiteapi';
+import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+import { fetchData, insert, update, deleteData } from '../../api/websiteapi';
 import { errorInfo } from '../../constants/error';
-import {  inject } from 'vue-demi';
-const reload = inject('reload');
+import { inject } from 'vue-demi';
+const reload = inject('reload') as { reload: () => void };
 
 interface TableItem {
 	id: number;
@@ -78,6 +81,7 @@ interface TableItem {
 const query = reactive({
 	websiteUrl: '',
 	websiteName: '',
+	type: '01',
 	pageIndex: 1,
 	pageSize: 10
 });
@@ -109,6 +113,7 @@ const clearQuery = () => {
 //新增操作
 const add = () => {
 	editVisible.value = true;
+	form.id = '';
 	form.websiteUrl = '';
 	form.websiteName = '';
 	insertOrUpdate.value = '1';
@@ -120,14 +125,24 @@ const handlePageChange = (val: number) => {
 };
 
 // 删除操作
-const handleDelete = (index: number) => {
+const handleDelete = (row: any) => {
 	// 二次确认删除
 	ElMessageBox.confirm('确定要删除吗？', '提示', {
 		type: 'warning'
 	})
 		.then(() => {
-			ElMessage.success('删除成功');
-			tableData.value.splice(index, 1);
+			form.id = row.id;
+			deleteData(
+				form
+			).then(res => {
+				if (res.data.code === 200) {
+					ElMessage.success('删除成功');
+					//@ts-ignore
+					reload();
+				} else {
+					ElMessage.error(errorInfo.deleteError)
+				}
+			});
 		})
 		.catch(() => { });
 };
@@ -136,12 +151,15 @@ const handleDelete = (index: number) => {
 const editVisible = ref(false);
 const insertOrUpdate = ref('')
 let form = reactive({
+	id: '',
 	websiteUrl: '',
-	websiteName: ''
+	websiteName: '',
+	type: '01',
 });
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
 	idx = index;
+	form.id = row.id;
 	form.websiteUrl = row.websiteUrl;
 	form.websiteName = row.websiteName;
 	editVisible.value = true;
@@ -154,9 +172,22 @@ const saveEdit = () => {
 		).then(res => {
 			if (res.data.code === 200) {
 				ElMessage.success('新增成功');
+				//@ts-ignore
 				reload();
 			} else {
 				ElMessage.error(errorInfo.addError)
+			}
+		});
+	} else if (insertOrUpdate.value === '2') {
+		update(
+			form
+		).then(res => {
+			if (res.data.code === 200) {
+				ElMessage.success('更新成功');
+				//@ts-ignore
+				reload();
+			} else {
+				ElMessage.error(errorInfo.updateError)
 			}
 		});
 	}

@@ -14,3 +14,17 @@ export const insert = (params: object) => {
         method: 'post'
     });
 };
+export const update = (params: object) => {
+    return request({
+        url: '/api/websiteListResource/update',
+        data: params,
+        method: 'post'
+    });
+};
+export const deleteData = (params: object) => {
+    return request({
+        url: '/api/websiteListResource/delete',
+        data: params,
+        method: 'post'
+    });
+};
