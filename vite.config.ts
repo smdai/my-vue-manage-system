@@ -31,6 +31,7 @@ export default defineConfig({
 			// [/mars]为统一部分，下面就以 /mars 开启
 			'/api': {
 				target: "http://localhost:8001",
+				// target: "http://10.211.55.4:8001",
 				// rewrite: (path) => path.replace('/api/', '/'),
 				changeOrigin: true,
 			}

@@ -19,7 +19,7 @@
 				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column label="网站地址">
 					<template #default="scope">
-						<el-link href="{{ scope.row.websiteUrl }}" target="_blank">{{ scope.row.websiteUrl }}</el-link>
+						<el-link :href="scope.row.websiteUrl" target="_blank">{{ scope.row.websiteUrl }}</el-link>
 					</template>
 				</el-table-column>
 				<el-table-column prop="websiteName" label="网站名称"></el-table-column>
