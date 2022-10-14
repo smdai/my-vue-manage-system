@@ -17,7 +17,11 @@
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-				<el-table-column prop="websiteUrl" label="网站地址"></el-table-column>
+				<el-table-column label="网站地址">
+					<template #default="scope">
+						<el-link href="{{ scope.row.websiteUrl }}" target="_blank">{{ scope.row.websiteUrl }}</el-link>
+					</template>
+				</el-table-column>
 				<el-table-column prop="websiteName" label="网站名称"></el-table-column>
 				<el-table-column prop="inputTime" label="录入时间"></el-table-column>
 				<el-table-column prop="updateTime" label="更新时间"></el-table-column>
