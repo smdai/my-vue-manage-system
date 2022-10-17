@@ -11,38 +11,38 @@
 			router
 		>
 			<template v-for="item in items">
-				<template v-if="item.subs">
-					<el-sub-menu :index="item.index" :key="item.index" v-permiss="item.permiss">
+				<template v-if="item.subs!=null">
+					<el-sub-menu :index="item.menuUrl" :key="item.menuUrl" v-permiss="item.menuId">
 						<template #title>
 							<el-icon>
 								<component :is="item.icon"></component>
 							</el-icon>
-							<span>{{ item.title }}</span>
+							<span>{{ item.menuName }}</span>
 						</template>
 						<template v-for="subItem in item.subs">
 							<el-sub-menu
-								v-if="subItem.subs"
-								:index="subItem.index"
-								:key="subItem.index"
-								v-permiss="item.permiss"
+								v-if="subItem.subs!=null"
+								:index="subItem.menuUrl"
+								:key="subItem.menuUrl"
+								v-permiss="subItem.menuId"
 							>
-								<template #title>{{ subItem.title }}</template>
-								<el-menu-item v-for="(threeItem, i) in subItem.subs" :key="i" :index="threeItem.index">
-									{{ threeItem.title }}
+								<template #title>{{ subItem.menuName }}</template>
+								<el-menu-item v-for="(threeItem, i) in subItem.subs" :key="i" :index="threeItem.menuUrl" v-permiss='threeItem.menuId'>
+									{{ threeItem.menuName }}
 								</el-menu-item>
 							</el-sub-menu>
-							<el-menu-item v-else :index="subItem.index" v-permiss="item.permiss">
-								{{ subItem.title }}
+							<el-menu-item v-else :index="subItem.menuUrl" v-permiss="subItem.menuId">
+								{{ subItem.menuName }}
 							</el-menu-item>
 						</template>
 					</el-sub-menu>
 				</template>
 				<template v-else>
-					<el-menu-item :index="item.index" :key="item.index" v-permiss="item.permiss">
+					<el-menu-item :index="item.menuUrl" :key="item.menuUrl" v-permiss="item.menuId">
 						<el-icon>
 							<component :is="item.icon"></component>
 						</el-icon>
-						<template #title>{{ item.title }}</template>
+						<template #title>{{ item.menuName }}</template>
 					</el-menu-item>
 				</template>
 			</template>
@@ -55,98 +55,8 @@ import { computed } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRoute } from 'vue-router';
 
-const items = [
-	{
-		icon: 'Odometer',
-		index: '/dashboard',
-		title: '系统首页',
-		permiss: '1'
-	},
-	{
-		icon: 'Calendar',
-		index: '/table',
-		title: '基础表格',
-		permiss: '2'
-	},
-	{
-		icon: 'DocumentCopy',
-		index: '/tabs',
-		title: 'tab选项卡',
-		permiss: '3'
-	},
-	{
-		icon: 'Edit',
-		index: '3',
-		title: '表单相关',
-		permiss: '4',
-		subs: [
-			{
-				index: '/form',
-				title: '基本表单',
-				permiss: '5'
-			},
-			{
-				index: '/upload',
-				title: '文件上传',
-				permiss: '6'
-			},
-			{
-				index: '4',
-				title: '三级菜单',
-				permiss: '7',
-				subs: [
-					{
-						index: '/editor',
-						title: '富文本编辑器',
-						permiss: '8'
-					},
-					{
-						index: '/markdown',
-						title: 'markdown编辑器',
-						permiss: '9'
-					}
-				]
-			}
-		]
-	},
-	{
-		icon: 'Setting',
-		index: '/icon',
-		title: '自定义图标',
-		permiss: '10'
-	},
-	{
-		icon: 'PieChart',
-		index: '/charts',
-		title: 'schart图表',
-		permiss: '11'
-	},
-	{
-		icon: 'Warning',
-		index: '/permission',
-		title: '权限管理',
-		permiss: '13'
-	},
-	{
-		icon: 'CoffeeCup',
-		index: '/donate',
-		title: '支持作者',
-		permiss: '14'
-	},
-	{
-		icon: 'Edit',
-		index: 'website',
-		title: '网站导航',
-		permiss: '4',
-		subs: [
-			{
-				index: '/websitetable',
-				title: '常用网站',
-				permiss: '5'
-			}
-		]
-	}
-];
+
+const items = JSON.parse(localStorage.getItem('menu_info')||'');
 
 const route = useRoute();
 const onRoutes = computed(() => {

@@ -36,6 +36,7 @@ import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import { userLogin } from '../api/login';
+import { queryMenu } from '../api/menu';
 interface LoginInfo {
 	userName: string;
 	password: string;
@@ -44,7 +45,7 @@ interface LoginInfo {
 const router = useRouter();
 const param = reactive<LoginInfo>({
 	userName: 'admin',
-	password: '123123'
+	password: 'admin'
 });
 
 const rules: FormRules = {
@@ -73,6 +74,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 					const keys = permiss.defaultList[param.userName == 'admin' ? 'admin' : 'user'];
 					permiss.handleSet(keys);
 					localStorage.setItem('ms_keys', JSON.stringify(keys));
+					queryMenuInfo();
 					router.push('/');
 				} else {
 					ElMessage.error(res.data.message);
@@ -86,6 +88,17 @@ const submitForm = (formEl: FormInstance | undefined) => {
 		}
 	});
 };
+
+const queryMenuInfo = () => {
+	queryMenu(localStorage.getItem('ms_username') || '').then(res => {
+		if(res.data.code === 200){
+			localStorage.setItem('menu_info',JSON.stringify(res.data.data));
+		}else{
+			ElMessage.error('系统错误，请联系系统管理员！');
+		}
+		
+	});
+}
 
 const tags = useTagsStore();
 tags.clearTags();
