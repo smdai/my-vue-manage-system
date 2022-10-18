@@ -37,6 +37,7 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import { userLogin } from '../api/login';
 import { queryMenu } from '../api/menu';
+import { getSession } from '../api/session';
 import md5 from 'js-md5';
 interface LoginInfo {
 	userName: string;
@@ -61,14 +62,14 @@ const rules: FormRules = {
 };
 // const permiss = usePermissStore();
 const login = ref<FormInstance>();
+
 const submitForm = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
 
 	formEl.validate((valid: boolean) => {
 		if (valid) {
-			param.password = md5(param.password);
 			userLogin(
-				param
+				{ userName: param.userName, password: md5(param.password) }
 			).then(res => {
 				if (res.data.code === 200) {
 					ElMessage.success('登录成功');
@@ -76,6 +77,13 @@ const submitForm = (formEl: FormInstance | undefined) => {
 					// const keys = permiss.defaultList[param.userName == 'admin' ? 'admin' : 'user'];
 					// permiss.handleSet(keys);
 					// localStorage.setItem('ms_keys', JSON.stringify(keys));
+					getSession(localStorage.getItem('ms_username') || '').then(res => {
+						if (res.data.code === 200) {
+							localStorage.setItem('auth', res.data.data.auth);
+						}else{
+							localStorage.setItem('auth', 'false');
+						}
+					});
 					queryMenu(localStorage.getItem('ms_username') || '').then(res => {
 						if (res.data.code === 200) {
 							localStorage.setItem('menu_info', JSON.stringify(res.data.data));

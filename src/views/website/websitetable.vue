@@ -13,7 +13,7 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add">新增</el-button>
+				<el-button type="primary" :icon="Plus" @click="add" v-if=auth>新增</el-button>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
 				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
@@ -25,12 +25,12 @@
 				<el-table-column prop="websiteName" label="网站名称"></el-table-column>
 				<el-table-column prop="inputTime" label="录入时间"></el-table-column>
 				<el-table-column prop="updateTime" label="更新时间"></el-table-column>
-				<el-table-column label="操作" width="220" align="center">
+				<el-table-column label="操作" width="220" align="center" v-if=auth>
 					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-permiss="15">
+						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-if=auth>
 							编辑
 						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row)" v-permiss="16">
+						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row)" v-if=auth>
 							删除
 						</el-button>
 					</template>
@@ -73,7 +73,7 @@ import { fetchData, insert, update, deleteData } from '../../api/websiteapi';
 import { errorInfo } from '../../constants/error';
 import { inject } from 'vue-demi';
 const reload = inject('reload') as { reload: () => void };
-
+const auth = localStorage.getItem('auth')==='true';
 interface TableItem {
 	id: number;
 	websiteUrl: string;
