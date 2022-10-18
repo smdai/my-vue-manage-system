@@ -5,7 +5,7 @@
 			<el-icon v-if="sidebar.collapse"><Expand /></el-icon>
 			<el-icon v-else><Fold /></el-icon>
 		</div>
-		<div class="logo">后台管理系统</div>
+		<div class="logo">搬砖天才管理系统</div>
 		<div class="header-right">
 			<div class="header-user-con">
 				<!-- 消息中心 -->
@@ -31,7 +31,8 @@
 					</span>
 					<template #dropdown>
 						<el-dropdown-menu>
-							<a href="https://github.com/lin-xin/vue-manage-system" target="_blank">
+							<!-- <a href="https://github.com/lin-xin/vue-manage-system" target="_blank"> -->
+							<a href="https://github.com/smdai/my-vue-manage-system" target="_blank">
 								<el-dropdown-item>项目仓库</el-dropdown-item>
 							</a>
 							<el-dropdown-item command="user">个人中心</el-dropdown-item>
@@ -47,7 +48,7 @@
 import { onMounted } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
-import imgurl from '../assets/img/img.jpg';
+import imgurl from '../assets/img/headImage.jpeg';
 
 const username: string | null = localStorage.getItem('ms_username');
 const message: number = 2;

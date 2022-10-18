@@ -1,7 +1,7 @@
 <template>
 	<div class="login-wrap">
 		<div class="ms-login">
-			<div class="ms-title">后台管理系统</div>
+			<div class="ms-title">搬砖天才管理系统</div>
 			<el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
 				<el-form-item prop="userName">
 					<el-input v-model="param.userName" placeholder="userName">
@@ -21,7 +21,7 @@
 				<div class="login-btn">
 					<el-button type="primary" @click="submitForm(login)">登录</el-button>
 				</div>
-				<p class="login-tips">Tips : 用户名和密码随便填。</p>
+				<!-- <p class="login-tips">Tips : 用户名和密码随便填。</p> -->
 			</el-form>
 		</div>
 	</div>
@@ -37,6 +37,7 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import { userLogin } from '../api/login';
 import { queryMenu } from '../api/menu';
+import md5 from 'js-md5';
 interface LoginInfo {
 	userName: string;
 	password: string;
@@ -44,8 +45,8 @@ interface LoginInfo {
 
 const router = useRouter();
 const param = reactive<LoginInfo>({
-	userName: 'admin',
-	password: 'admin'
+	userName: 'user',
+	password: 'user'
 });
 
 const rules: FormRules = {
@@ -65,6 +66,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 
 	formEl.validate((valid: boolean) => {
 		if (valid) {
+			param.password = md5(param.password);
 			userLogin(
 				param
 			).then(res => {
@@ -104,7 +106,7 @@ tags.clearTags();
 	position: relative;
 	width: 100%;
 	height: 100%;
-	background-image: url(../assets/img/login-bg.jpg);
+	background-image: url(../assets/img/login-back.jpg);
 	background-size: 100%;
 }
 
