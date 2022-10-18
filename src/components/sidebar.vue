@@ -12,7 +12,7 @@
 		>
 			<template v-for="item in items">
 				<template v-if="item.subs!=null">
-					<el-sub-menu :index="item.menuUrl" :key="item.menuUrl" v-permiss="item.menuId">
+					<el-sub-menu :index="item.menuUrl" :key="item.menuUrl" >
 						<template #title>
 							<el-icon>
 								<component :is="item.icon"></component>
@@ -24,21 +24,21 @@
 								v-if="subItem.subs!=null"
 								:index="subItem.menuUrl"
 								:key="subItem.menuUrl"
-								v-permiss="subItem.menuId"
+								
 							>
 								<template #title>{{ subItem.menuName }}</template>
-								<el-menu-item v-for="(threeItem, i) in subItem.subs" :key="i" :index="threeItem.menuUrl" v-permiss='threeItem.menuId'>
+								<el-menu-item v-for="(threeItem, i) in subItem.subs" :key="i" :index="threeItem.menuUrl" >
 									{{ threeItem.menuName }}
 								</el-menu-item>
 							</el-sub-menu>
-							<el-menu-item v-else :index="subItem.menuUrl" v-permiss="subItem.menuId">
+							<el-menu-item v-else :index="subItem.menuUrl" >
 								{{ subItem.menuName }}
 							</el-menu-item>
 						</template>
 					</el-sub-menu>
 				</template>
 				<template v-else>
-					<el-menu-item :index="item.menuUrl" :key="item.menuUrl" v-permiss="item.menuId">
+					<el-menu-item :index="item.menuUrl" :key="item.menuUrl" >
 						<el-icon>
 							<component :is="item.icon"></component>
 						</el-icon>
