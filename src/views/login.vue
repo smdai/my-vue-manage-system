@@ -74,31 +74,26 @@ const submitForm = (formEl: FormInstance | undefined) => {
 					// const keys = permiss.defaultList[param.userName == 'admin' ? 'admin' : 'user'];
 					// permiss.handleSet(keys);
 					// localStorage.setItem('ms_keys', JSON.stringify(keys));
-					queryMenuInfo();
-					router.push('/');
+					queryMenu(localStorage.getItem('ms_username') || '').then(res => {
+						if (res.data.code === 200) {
+							localStorage.setItem('menu_info', JSON.stringify(res.data.data));
+							router.push('/');
+						} else {
+							ElMessage.error('系统错误，请联系系统管理员！');
+							return false;
+						}
+					});
 				} else {
 					ElMessage.error(res.data.message);
 					return false;
 				}
 			});
-
 		} else {
 			ElMessage.error('登录失败，请联系系统管理员！');
 			return false;
 		}
 	});
 };
-
-const queryMenuInfo = () => {
-	queryMenu(localStorage.getItem('ms_username') || '').then(res => {
-		if(res.data.code === 200){
-			localStorage.setItem('menu_info',JSON.stringify(res.data.data));
-		}else{
-			ElMessage.error('系统错误，请联系系统管理员！');
-		}
-		
-	});
-}
 
 const tags = useTagsStore();
 tags.clearTags();
