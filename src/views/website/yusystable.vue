@@ -85,7 +85,7 @@ interface TableItem {
 const query = reactive({
 	websiteUrl: '',
 	websiteName: '',
-	type: '01',
+	type: '02',
 	pageIndex: 1,
 	pageSize: 10
 });
@@ -158,7 +158,7 @@ let form = reactive({
 	id: '',
 	websiteUrl: '',
 	websiteName: '',
-	type: '01',
+	type: '02',
 });
 let idx: number = -1;
 const handleEdit = (index: number, row: any) => {
