@@ -107,6 +107,41 @@ const routes: RouteRecordRaw[] = [
                     title: '宇信网站',
                 },
                 component: () => import( /* webpackChunkName: "yusystable" */ "../views/website/yusystable.vue")
+            }, {
+                path: "/animationtable",
+                name: "animationtable",
+                meta: {
+                    title: '动漫网站',
+                },
+                component: () => import( /* webpackChunkName: "animationtable" */ "../views/website/animationtable.vue")
+            }, {
+                path: "/musictable",
+                name: "musictable",
+                meta: {
+                    title: '音乐网站',
+                },
+                component: () => import( /* webpackChunkName: "musictable" */ "../views/website/musictable.vue")
+            }, {
+                path: "/studytable",
+                name: "studytable",
+                meta: {
+                    title: '学习网站',
+                },
+                component: () => import( /* webpackChunkName: "studytable" */ "../views/website/studytable.vue")
+            }, {
+                path: "/toolstable",
+                name: "toolstable",
+                meta: {
+                    title: '工具网站',
+                },
+                component: () => import( /* webpackChunkName: "toolstable" */ "../views/website/toolstable.vue")
+            }, {
+                path: "/videotable",
+                name: "videotable",
+                meta: {
+                    title: '视频网站',
+                },
+                component: () => import( /* webpackChunkName: "videotable" */ "../views/website/videotable.vue")
             }
         ]
     }, {
