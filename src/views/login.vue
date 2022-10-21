@@ -36,7 +36,6 @@ import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Lock, User } from '@element-plus/icons-vue';
 import { userLogin } from '../api/login';
-import { queryMenu } from '../api/menu';
 import { getSession } from '../api/session';
 import md5 from 'js-md5';
 interface LoginInfo {

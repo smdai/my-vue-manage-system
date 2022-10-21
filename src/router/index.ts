@@ -137,7 +137,7 @@ router.beforeEach((to, from, next) => {
     const menuAuth = localStorage.getItem('menuAuth');
     if (!role && to.path !== '/login') {
         next('/login');
-    } else if (to.name && menuAuth && !['403','Login','Home'].includes(to.name.toString()) && !menuAuth.split(",").includes(to.name.toString())) {
+    } else if (to.name && menuAuth && !['403','Login','Home','user'].includes(to.name.toString()) && !menuAuth.split(",").includes(to.name.toString())) {
         // 如果没有权限，则进入403
         next('/403');
     } else {

@@ -44,21 +44,21 @@
 
 		<!-- 编辑弹出框 -->
 		<el-dialog title="编辑" v-model="editVisible" width="30%">
-			<el-form label-width="70px">
+			<el-form :model="form" :rules="rules" ref="editForm" label-width="90px">
 				<el-form-item label="id" v-if="false">
 					<el-input v-model="form.id" disabled></el-input>
 				</el-form-item>
-				<el-form-item label="网站地址">
-					<el-input v-model="form.websiteUrl"></el-input>
+				<el-form-item label="网站地址" prop="websiteUrl">
+					<el-input v-model="form.websiteUrl" placeholder="请输入网站地址（http://或https://开头）"></el-input>
 				</el-form-item>
-				<el-form-item label="网站名称">
+				<el-form-item label="网站名称" prop="websiteName">
 					<el-input v-model="form.websiteName"></el-input>
 				</el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="editVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveEdit">确 定</el-button>
+					<el-button type="primary" @click="saveEdit(editForm)">确 定</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -72,8 +72,9 @@ import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/websiteapi';
 import { errorInfo } from '../../constants/error';
 import { inject } from 'vue-demi';
+import type { FormInstance, FormRules } from 'element-plus';
 const reload = inject('reload') as { reload: () => void };
-const editAuth = localStorage.getItem('editAuth')==='true';
+const editAuth = localStorage.getItem('editAuth') === 'true';
 interface TableItem {
 	id: number;
 	websiteUrl: string;
@@ -81,7 +82,26 @@ interface TableItem {
 	inputTime: string;
 	updateTime: string;
 }
-
+const rules: FormRules = {
+	websiteUrl: [
+		{
+			required: true,
+			message: '请输入网站地址',
+			trigger: 'blur'
+		},
+		{
+			pattern: '^(http|https)://',
+			message: '以http://或https://开头'
+		}
+	],
+	websiteName: [
+		{
+			required: true,
+			message: '请输入网站名称',
+			trigger: 'blur'
+		}
+	]
+};
 const query = reactive({
 	websiteUrl: '',
 	websiteName: '',
@@ -169,33 +189,40 @@ const handleEdit = (index: number, row: any) => {
 	editVisible.value = true;
 	insertOrUpdate.value = '2';
 };
-const saveEdit = () => {
-	if (insertOrUpdate.value === '1') {
-		insert(
-			form
-		).then(res => {
-			if (res.data.code === 200) {
-				ElMessage.success('新增成功');
-				//@ts-ignore
-				reload();
-			} else {
-				ElMessage.error(errorInfo.addError)
+const editForm = ref<FormInstance>();
+const saveEdit = (formEl: FormInstance | undefined) => {
+	if (!formEl) return;
+	formEl.validate((valid: boolean) => {
+		if (valid) {
+			if (insertOrUpdate.value === '1') {
+				insert(
+					form
+				).then(res => {
+					if (res.data.code === 200) {
+						ElMessage.success('新增成功');
+						//@ts-ignore
+						reload();
+					} else {
+						ElMessage.error(errorInfo.addError)
+					}
+				});
+			} else if (insertOrUpdate.value === '2') {
+				update(
+					form
+				).then(res => {
+					if (res.data.code === 200) {
+						ElMessage.success('更新成功');
+						//@ts-ignore
+						reload();
+					} else {
+						ElMessage.error(errorInfo.updateError)
+					}
+				});
 			}
-		});
-	} else if (insertOrUpdate.value === '2') {
-		update(
-			form
-		).then(res => {
-			if (res.data.code === 200) {
-				ElMessage.success('更新成功');
-				//@ts-ignore
-				reload();
-			} else {
-				ElMessage.error(errorInfo.updateError)
-			}
-		});
-	}
-	editVisible.value = false;
+			editVisible.value = false;
+		}
+	});
+
 };
 
 </script>
