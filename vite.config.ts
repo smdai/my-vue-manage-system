@@ -29,7 +29,7 @@ export default defineConfig({
 			// 此处为抽取的接口 端口后的统一部分
 			// 例如： http://199.199.9.9:8080/mars/v1    http://199.199.9.9:8080/mars/v2
 			// [/mars]为统一部分，下面就以 /mars 开启
-			'/api': {
+			'/bztcSystem': {
 				target: "http://localhost:8001",
 				// target: "http://10.211.55.4:8001",
 				// rewrite: (path) => path.replace('/api/', '/'),
