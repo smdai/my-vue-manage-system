@@ -167,7 +167,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | vue-manage-system`;
+    document.title = `${to.meta.title} | 搬砖天才`;
     const role = localStorage.getItem('ms_username');
     const menuAuth = localStorage.getItem('menuAuth');
     if (!role && to.path !== '/login') {

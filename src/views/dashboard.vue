@@ -1,7 +1,10 @@
 <template>
-	<div class="dash-board">
-		
+	<div>
+		<div class="rightullidiv">
+			<img src="../assets/img/shouye.png" alt="" class="rightulliimg">
+		</div>
 	</div>
+
 </template>
 
 <script setup lang="ts" name="dashboard">
@@ -9,11 +12,16 @@
 </script>
 
 <style scoped>
-.dash-board{
-	position: relative;
+.rightullidiv {
 	width: 100%;
-	height: 100%;
-	background-image: url(../assets/img/shouye.png);
-	background-size: 100%;
+	background: #000000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.rightulliimg {
+	max-width: 100%;
+	max-height: 100%;
 }
 </style>
