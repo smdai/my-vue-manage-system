@@ -142,6 +142,13 @@ const routes: RouteRecordRaw[] = [
                     title: '视频网站',
                 },
                 component: () => import( /* webpackChunkName: "videotable" */ "../views/website/videotable.vue")
+            }, {
+                path: "/vpnintranettable",
+                name: "vpnintranettable",
+                meta: {
+                    title: 'vpn内网',
+                },
+                component: () => import( /* webpackChunkName: "videotable" */ "../views/website/vpnintranettable.vue")
             }
         ]
     }, {
