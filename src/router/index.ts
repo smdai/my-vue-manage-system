@@ -148,7 +148,14 @@ const routes: RouteRecordRaw[] = [
                 meta: {
                     title: 'vpn内网',
                 },
-                component: () => import( /* webpackChunkName: "videotable" */ "../views/website/vpnintranettable.vue")
+                component: () => import( /* webpackChunkName: "vpnintranettable" */ "../views/website/vpnintranettable.vue")
+            }, {
+                path: "/kafkaEstable",
+                name: "kafkaEstable",
+                meta: {
+                    title: 'Es操作',
+                },
+                component: () => import( /* webpackChunkName: "kafkaEstable" */ "../views/website/kafkaEstable.vue")
             }
         ]
     }, {

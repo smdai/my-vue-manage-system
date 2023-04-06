@@ -30,8 +30,8 @@ export default defineConfig({
 			// 例如： http://199.199.9.9:8080/mars/v1    http://199.199.9.9:8080/mars/v2
 			// [/mars]为统一部分，下面就以 /mars 开启
 			'/bztcSystem': {
-				target: "http://10.8.0.1:8001",
-				// target: "http://10.211.55.4:8001",
+				// target: "http://10.8.0.1:8001",
+				target: "http://10.211.55.2:8001",
 				// rewrite: (path) => path.replace('/api/', '/'),
 				changeOrigin: true,
 			}
