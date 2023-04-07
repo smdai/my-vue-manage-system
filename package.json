@@ -8,9 +8,9 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.0.9",
+    "@element-plus/icons-vue": "^2.1.0",
     "axios": "^0.27.2",
-    "element-plus": "^2.2.14",
+    "element-plus": "^2.3.2",
     "js-base64": "^3.7.2",
     "md-editor-v3": "^2.2.1",
     "pinia": "^2.0.20",

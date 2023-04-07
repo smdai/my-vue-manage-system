@@ -1,15 +1,22 @@
 import request from '../utils/request';
 
-export const fetchData = (params: string) => {
+export const fetchData = (params: object) => {
     return request({
         url: '/bztcSystem/api/kafkaResource/queryByPage',
-        params: { param: params },
-        method: 'get'
+        data: params,
+        method: 'post'
     });
 };
 export const insertEs = (params: object) => {
     return request({
         url: '/bztcSystem/api/kafkaResource/insertEs',
+        data: params,
+        method: 'post'
+    });
+};
+export const insertEsByKafka = (params: object) => {
+    return request({
+        url: '/bztcSystem/api/kafkaResource/insertEsByKafka',
         data: params,
         method: 'post'
     });
