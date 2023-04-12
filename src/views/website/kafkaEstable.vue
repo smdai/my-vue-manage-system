@@ -5,7 +5,7 @@
 				<el-input v-model="query.name" placeholder="姓名" class="handle-input mr10"></el-input>
 				<el-input v-model="query.age" placeholder="年龄" class="handle-input mr10"></el-input>
 				<el-select v-model="query.sex" class="m-2" placeholder="性别">
-					<el-option v-for="item in sexs" :key="item.value" :label="item.label" :value="item.value" />
+					<el-option v-for="item in dics.sexs" :key="item.key" :label="item.value" :value="item.key" />
 				</el-select>
 				<!-- <el-input v-model="query.sex" placeholder="性别" class="handle-input mr10"></el-input> -->
 				<el-input v-model="query.address" placeholder="地址" class="handle-input mr10"></el-input>
@@ -29,7 +29,7 @@
 				<el-table-column prop="sex" label="性别">
 					<template #default="scope">
 						<el-select v-model="scope.row.sex" style="width:100%" disabled>
-							<el-option v-for="item in sexs" :key="item.value" :label="item.label" :value="item.value">
+							<el-option v-for="item in dics.sexs" :key="item.key" :label="item.value" :value="item.key">
 							</el-option>
 						</el-select>
 					</template>
@@ -69,7 +69,7 @@
 				</el-form-item>
 				<el-form-item label="性别" prop="sex">
 					<el-select v-model="form.sex" class="m-2" placeholder="请选择">
-						<el-option v-for="item in sexs" :key="item.value" :label="item.label" :value="item.value" />
+						<el-option v-for="item in dics.sexs" :key="item.key" :label="item.value" :value="item.key" />
 					</el-select>
 				</el-form-item>
 				<el-form-item label="手机号" prop="phone">
@@ -104,13 +104,15 @@
 </template>
 
 <script setup lang="ts" name="basetable">
-import { ref, reactive, stop } from 'vue';
+import { ref, reactive, onMounted, onBeforeMount } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus, SetUp } from '@element-plus/icons-vue';
 import { fetchData, insertEs, updateEs, deleteEs, insertEsByKafka } from '../../api/kafkaesapi';
+import { queryLibraries } from '../../api/codelibrary';
 import { errorInfo } from '../../constants/error';
 import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
+import exp from 'constants';
 const reload = inject('reload') as { reload: () => void };
 const editAuth = localStorage.getItem('editAuth') === 'true';
 interface TableItem {
@@ -154,16 +156,10 @@ const shortcuts = [
 		},
 	},
 ]
-const sexs = [
-	{
-		value: '01',
-		label: '男',
-	},
-	{
-		value: '02',
-		label: '女',
-	}
-]
+const dics = reactive({
+	sexs: Array()
+})
+
 const rules: FormRules = {
 	name: [
 		{ required: true, message: '请输入姓名', trigger: 'blur' }
@@ -191,6 +187,7 @@ const query = reactive({
 });
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
+
 // 获取表格数据
 const getData = () => {
 	fetchData(
@@ -200,6 +197,15 @@ const getData = () => {
 		pageTotal.value = res.data.total;
 	});
 };
+// 获取数据字典
+const getDics = () => {
+	queryLibraries(
+		["sex"]
+	).then(res => {
+		dics.sexs = res.data.sex
+	});
+}
+getDics();
 getData();
 
 // 查询操作
@@ -222,7 +228,7 @@ const add = () => {
 	editVisible.value = true;
 	form.id = '';
 	form.name = '';
-	form.age = '';
+	form.age = null;
 	form.phone = '';
 	form.sex = '';
 	form.address = '';
@@ -270,7 +276,7 @@ const insertOrUpdate = ref('')
 let form = reactive({
 	id: '',
 	name: '',
-	age: '',
+	age: null,
 	phone: '',
 	sex: '',
 	address: '',
