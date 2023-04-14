@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import Home from "../views/home.vue";
+import { ElMessage } from 'element-plus';
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
@@ -179,14 +180,23 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes
 });
-
+// 全局前置守卫
 router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | 搬砖天才`;
     const role = localStorage.getItem('ms_username');
     const menuAuth = localStorage.getItem('menuAuth');
-    if (!role && to.path !== '/login') {
-        next('/login');
-    } else if (to.name && menuAuth && !['403','Login','Home','user'].includes(to.name.toString()) && !menuAuth.split(",").includes(to.name.toString())) {
+    const token = localStorage.getItem('token');
+    if (to.path !== '/login') {
+        if (!role || role === 'null') {
+            // 如果没有权限，则进入403
+            next('/403');
+        } else if (!token || token === 'null') {
+            ElMessage.error('认证失败，请重新登录！');
+            next('/login');
+        } else {
+            next();
+        }
+    } else if (to.name && menuAuth && !['403', 'Login', 'Home', 'user'].includes(to.name.toString()) && !menuAuth.split(",").includes(to.name.toString())) {
         // 如果没有权限，则进入403
         next('/403');
     } else {

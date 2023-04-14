@@ -81,8 +81,10 @@ const submitForm = (formEl: FormInstance | undefined) => {
 							localStorage.setItem('editAuth', res.data.data.editAuth);
 							localStorage.setItem('menuAuth', res.data.data.menuAuthList);
 							localStorage.setItem('menu_info', JSON.stringify(res.data.data.menuInfoDtos));
+							localStorage.setItem('token', 'Bearer ' + res.data.data.token);
+							localStorage.setItem('userId', res.data.data.userId);
 							router.push('/');
-						}else{
+						} else {
 							localStorage.setItem('editAuth', 'false');
 							ElMessage.error('系统错误，请联系系统管理员！');
 							return false;
