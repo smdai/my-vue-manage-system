@@ -88,6 +88,13 @@ const routes: RouteRecordRaw[] = [
                 },
                 component: () => import(/* webpackChunkName: "editor" */ '../views/editor.vue')
             }, {
+                path: '/chatgpt',
+                name: 'chatgpt',
+                meta: {
+                    title: 'ChatGPT',
+                },
+                component: () => import(/* webpackChunkName: "editor" */ '../views/chatgpt.vue')
+            }, {
                 path: '/markdown',
                 name: 'markdown',
                 meta: {

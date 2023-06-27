@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError, AxiosResponse, AxiosRequestConfig } from 'axios';
 import { ElMessage } from 'element-plus';
 const service: AxiosInstance = axios.create({
-    timeout: 5000,
+    timeout: 60000,
     headers: {
         'Content-Type': 'application/json;charset=UTF-8',
         'Accept': "application/json,text/plain,*/*"
