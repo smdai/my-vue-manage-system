@@ -22,14 +22,14 @@
 </template>
 
 <script setup lang="ts" name="jsonformat">
-import '../constants/ace.config';
+import '../../constants/ace.config';
 import { reactive,ref } from 'vue'
 import { Vue3JsonEditor } from 'vue3-json-editor'
 import { VAceEditor } from "vue3-ace-editor"
 import { Apple } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { testGroovy } from '../api/groovytest';
-import { errorInfo } from '../constants/error';
+import { testGroovy } from '../../api/groovytest';
+import { errorInfo } from '../../constants/error';
 const editMsg = reactive({
 	jsonMsg: { "name": "daism", "age": 18 },
 	groovyScript: 'def param = {\n	return dataSource?.name\n} \nparam.call()'

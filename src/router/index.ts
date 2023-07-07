@@ -100,7 +100,14 @@ const routes: RouteRecordRaw[] = [
                 meta: {
                     title: 'groovy测试',
                 },
-                component: () => import(/* webpackChunkName: "groovytest" */ '../views/groovytest.vue')
+                component: () => import(/* webpackChunkName: "groovytest" */ '../views/groovy/groovytest.vue')
+            }, {
+                path: '/rulengparam',
+                name: 'rulengparam',
+                meta: {
+                    title: '参数管理',
+                },
+                component: () => import(/* webpackChunkName: "groovytest" */ '../views/groovy/rulengparam.vue')
             }, {
                 path: '/markdown',
                 name: 'markdown',
