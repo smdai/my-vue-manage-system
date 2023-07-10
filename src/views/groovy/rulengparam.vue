@@ -14,8 +14,12 @@
 			</div>
 			<div class="handle-box">
 				<el-button type="primary" :icon="Plus" @click="add" v-if=editAuth>新增</el-button>
+				<el-button type="primary" :icon="View" @click="handleView"> 查看 </el-button>
+				<el-button type="primary" :icon="Edit" @click="handleEdit" v-if=editAuth> 编辑 </el-button>
+				<el-button type="danger" :icon="Delete" @click="handleDelete" v-if=editAuth> 删除 </el-button>
 			</div>
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
+				@row-click="handleRowClick" highlight-current-row>
 				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="paramCode" label="参数编码"></el-table-column>
 				<el-table-column prop="paramName" label="参数名称"></el-table-column>
@@ -34,19 +38,6 @@
 				<el-table-column prop="inputTime" label="录入时间"></el-table-column>
 				<el-table-column prop="updateUser" label="更新人"></el-table-column>
 				<el-table-column prop="updateTime" label="更新时间"></el-table-column>
-				<el-table-column label="操作" width="320" align="center" v-if=editAuth>
-					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleView(scope.$index, scope.row)" v-if=editAuth>
-							查看
-						</el-button>
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-if=editAuth>
-							编辑
-						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row)" v-if=editAuth>
-							删除
-						</el-button>
-					</template>
-				</el-table-column>
 			</el-table>
 			<div class="pagination">
 				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
@@ -117,17 +108,16 @@
 <script setup lang="ts" name="basetable">
 import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/rulengparam';
 import { errorInfo } from '../../constants/error';
 import { queryLibraries } from '../../api/codelibrary';
 import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
-import { ja } from 'element-plus/es/locale';
 const reload = inject('reload') as { reload: () => void };
 const editAuth = localStorage.getItem('editAuth') === 'true';
 const paramSubClazzVisible = ref(false);
-const saveFlag = ref(false);
+const saveFlag = ref(true);
 const dics = reactive({
 	ParamType: Array(),
 	YesNo: Array(),
@@ -144,8 +134,12 @@ const getDics = () => {
 	});
 }
 getDics();
-const getDictValue = (key: string, dict: any[]) => {
-	return dict.find(item => item.key === key).value;
+const getDictValue = (key: string, dict: Array<any>) => {
+	const temp = dict.find(item => item.key === key);
+	return temp ? temp.value : ""
+}
+const handleRowClick = (row: any) => {
+	idx = tableData.value.indexOf(row);
 }
 interface TableItem {
 	[key: string]: any;
@@ -240,6 +234,7 @@ const add = () => {
 	});
 	insertOrUpdate.value = '1';
 	isFormDisabled.value = false;
+	saveFlag.value = true;
 
 };
 // 分页导航
@@ -249,12 +244,17 @@ const handlePageChange = (val: number) => {
 };
 
 // 删除操作
-const handleDelete = (row: any) => {
+const handleDelete = () => {
+	if (idx < 0 || idx >= tableData.value.length) {
+		ElMessage.error(errorInfo.selectRwoError);
+		return;
+	}
 	// 二次确认删除
 	ElMessageBox.confirm('确定要删除吗？', '提示', {
 		type: 'warning'
 	})
 		.then(() => {
+			const row = tableData.value[idx];
 			form.id = row.id;
 			deleteData(
 				form
@@ -292,8 +292,12 @@ const form: TableItem = reactive({
 	updateTime: '',
 });
 let idx: number = -1;
-const handleEdit = (index: number, row: any) => {
-	idx = index;
+const handleEdit = () => {
+	if (idx < 0 || idx >= tableData.value.length) {
+		ElMessage.error(errorInfo.selectRwoError);
+		return;
+	}
+	const row = tableData.value[idx];
 	form.id = row.id;
 	Object.assign(form, row); // 使用对象解构赋值将 row 的值复制到 form
 	editVisible.value = true;
@@ -301,14 +305,20 @@ const handleEdit = (index: number, row: any) => {
 	saveFlag.value = true;
 	isFormDisabled.value = false;
 };
-const handleView = (index: number, row: any) => {
-	idx = index;
+
+const handleView = () => {
+	if (idx < 0 || idx >= tableData.value.length) {
+		ElMessage.error(errorInfo.selectRwoError);
+		return;
+	}
+	const row = tableData.value[idx];
 	form.id = row.id;
 	Object.assign(form, row); // 使用对象解构赋值将 row 的值复制到 form
 	editVisible.value = true;
 	saveFlag.value = false;
 	isFormDisabled.value = true;
 };
+
 const editForm = ref<FormInstance>();
 const saveEdit = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
