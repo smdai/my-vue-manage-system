@@ -46,7 +46,7 @@
 		</div>
 
 		<!-- 编辑弹出框 -->
-		<el-dialog title="编辑" v-model="editVisible" width="80%">
+		<el-dialog title="编辑" v-model="editVisible" width="80%" :style="{ 'margin-top': '20px' }">
 			<el-form :model="form" :rules="rules" ref="editForm" label-width="90px">
 				<el-form-item label="id" v-if="false">
 					<el-input v-model="form.id" disabled></el-input>
@@ -90,8 +90,8 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="groovy脚本" prop="script">
-					<el-input v-model="form.script" type="textarea" :autosize="{ minRows: 5, maxRows: 20 }"
-						:readonly="isFormDisabled"></el-input>
+					<v-ace-editor v-model:value="form.script" lang="groovy" theme="eclipse"
+						style="height: 300px;width: 100%;border: 1px solid rgb(190, 185, 185);" />
 				</el-form-item>
 
 			</el-form>
@@ -106,7 +106,9 @@
 </template>
 
 <script setup lang="ts" name="basetable">
-import { ref, reactive, stop } from 'vue';
+import '../../constants/ace.config';
+import { VAceEditor } from "vue3-ace-editor"
+import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/rulengparam';

@@ -107,7 +107,7 @@ const routes: RouteRecordRaw[] = [
                 meta: {
                     title: '参数管理',
                 },
-                component: () => import(/* webpackChunkName: "groovytest" */ '../views/groovy/rulengparam.vue')
+                component: () => import(/* webpackChunkName: "rulengparam" */ '../views/groovy/rulengparam.vue')
             }, {
                 path: '/markdown',
                 name: 'markdown',

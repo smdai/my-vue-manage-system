@@ -7,6 +7,20 @@ export const fetchData = (params: string) => {
         method: 'get'
     });
 };
+export const queryAllData = (params: string) => {
+    return request({
+        url: '/bztc-study01/api/rulengparamresource/queryAll',
+        params: { param: params },
+        method: 'get'
+    });
+};
+export const executeParam = (params: object) => {
+    return request({
+        url: '/bztc-study01/api/rulengparamresource/execute',
+        data: params,
+        method: 'post'
+    });
+};
 export const insert = (params: object) => {
     return request({
         url: '/bztc-study01/api/rulengparamresource/insert',
