@@ -87,19 +87,27 @@ const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
 	// query.paramCodeList = Array.from(query.paramCodeList).join(',');
+	if(query.paramCodeList === null){
+		ElMessage.error("请选择参数。");
+		return;
+	}
 	query.jsonMsg = JSON.stringify(editMsg.jsonMsg);
 	executeParam(
 		query
 	).then(res => {
-		tableData.value = res.data.data;
-		pageTotal.value = res.data.total;
+		if (res.data.code === 200) {
+			tableData.value = res.data.data;
+			pageTotal.value = res.data.total;
+		} else {
+			ElMessage.error(res.data.message)
+		}
 	});
 };
 const query = reactive({
 	paramCode: '',
-	paramCodeList: '',
+	paramCodeList: null,
 	dsType: '',
-	jsonMsg:'',
+	jsonMsg: '',
 	pageIndex: 1,
 	pageSize: 10
 });
@@ -110,7 +118,7 @@ const editMsg = reactive({
 interface TableItem {
 	[key: string]: any;
 	paramCode: String;
-	paramCodeList: '';
+	paramCodeList: [];
 	paramName: string;
 	paramResult: string;
 }
