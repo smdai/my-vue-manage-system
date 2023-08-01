@@ -1,8 +1,8 @@
 import request from '../utils/request';
 
-export const userLogin = (params: object) => {
+export const queryChat = (params: object) => {
     return request({
-        url: '/bztc-study01/api/loginResource/login',
+        url: '/bztc-study01/api/chatgptResource/queryChat',
         data: params,
         method: 'post'
     });
