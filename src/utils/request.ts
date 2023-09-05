@@ -7,6 +7,7 @@ const service: AxiosInstance = axios.create({
         'Accept': "application/json,text/plain,*/*"
     },
 });
+
 service.interceptors.request.use(
     (config: AxiosRequestConfig) => {
         if (config && config.headers) {
