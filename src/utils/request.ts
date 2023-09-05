@@ -7,7 +7,6 @@ const service: AxiosInstance = axios.create({
         'Accept': "application/json,text/plain,*/*"
     },
 });
-
 service.interceptors.request.use(
     (config: AxiosRequestConfig) => {
         if (config && config.headers) {
@@ -43,8 +42,12 @@ service.interceptors.response.use(
         }
     },
     (error: AxiosError) => {
-        console.log(error);
-        ElMessage.error('请重新登录！【'+error+'】');
+        console.log(error.response?.status);
+        if(error.response?.status === 401){
+            ElMessage.error('登录超时或权限不足，请重新登录！');
+        }else{
+            ElMessage.error('请重新登录！【'+error+'】');
+        }
         return Promise.reject();
     }
 );

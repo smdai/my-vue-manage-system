@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus';
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        redirect: '/dashboard'
+        redirect: '/login'
     }, {
         path: "/",
         name: "Home",
@@ -207,22 +207,27 @@ router.beforeEach((to, from, next) => {
     const role = localStorage.getItem('ms_username');
     const menuAuth = localStorage.getItem('menuAuth');
     const token = localStorage.getItem('token');
-    if (to.path !== '/login') {
-        if (!role || role === 'null') {
-            // 如果没有权限，则进入403
-            next('/403');
-        } else if (!token || token === 'null') {
-            ElMessage.error('认证失败，请重新登录！');
-            next('/login');
-        } else {
-            next();
-        }
-    } else if (to.name && menuAuth && !['403', 'Login', 'Home', 'user'].includes(to.name.toString()) && !menuAuth.split(",").includes(to.name.toString())) {
+    //开始校验
+    if(to.path === '/403' || to.path === '/login'){
+        next();
+        return;
+    }
+    if (!role || role === 'null') {
         // 如果没有权限，则进入403
         next('/403');
-    } else {
-        next();
+        return;
     }
+    if (!token || token === 'null') {
+        ElMessage.error('认证失败，请重新登录！');
+        next('/login');
+        return;
+    }
+    if (to.name && menuAuth && !['403', 'Login', 'Home', 'user'].includes(to.name.toString()) && !menuAuth.split(",").includes(to.name.toString())) {
+        // 如果没有权限，则进入403
+        next('/403');
+        return;
+    }
+    next();
 });
 
 export default router;
