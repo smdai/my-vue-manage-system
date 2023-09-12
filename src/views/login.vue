@@ -73,6 +73,8 @@ const submitForm = (formEl: FormInstance | undefined) => {
 				if (res.data.code === 200) {
 					ElMessage.success('登录成功');
 					localStorage.setItem('ms_username', param.userName);
+					localStorage.setItem('token', 'Bearer ' + res.data.data.token);
+					localStorage.setItem('userId', res.data.data.userId);
 					// const keys = permiss.defaultList[param.userName == 'admin' ? 'admin' : 'user'];
 					// permiss.handleSet(keys);
 					// localStorage.setItem('ms_keys', JSON.stringify(keys));
@@ -81,8 +83,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
 							localStorage.setItem('editAuth', res.data.data.editAuth);
 							localStorage.setItem('menuAuth', res.data.data.menuAuthList);
 							localStorage.setItem('menu_info', JSON.stringify(res.data.data.menuInfoDtos));
-							localStorage.setItem('token', 'Bearer ' + res.data.data.token);
-							localStorage.setItem('userId', res.data.data.userId);
 							router.push('/dashboard');
 						} else {
 							localStorage.setItem('editAuth', 'false');
