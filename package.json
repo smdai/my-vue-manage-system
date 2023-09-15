@@ -10,6 +10,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "axios": "^0.27.2",
+    "babel-plugin-dynamic-import-webpack": "^1.1.0",
     "element-plus": "^2.3.2",
     "js-base64": "^3.7.2",
     "md-editor-v3": "^2.2.1",
@@ -22,6 +23,7 @@
     "wangeditor": "^4.7.15"
   },
   "devDependencies": {
+    "@rollup/plugin-dynamic-import-vars": "^2.0.5",
     "@types/js-md5": "^0.4.3",
     "@vitejs/plugin-vue": "^3.0.0",
     "@vue/compiler-sfc": "^3.1.2",
