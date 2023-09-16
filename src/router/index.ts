@@ -67,7 +67,7 @@ const routes: RouteRecordRaw[] = getRoutesFromLocalStorage();
 
 const router = createRouter({
     history: createWebHashHistory(),
-    routes
+    routes: getRoutesFromLocalStorage()
 });
 
 // 全局前置守卫
