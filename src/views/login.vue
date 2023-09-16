@@ -84,21 +84,15 @@ const submitForm = (formEl: FormInstance | undefined) => {
 							localStorage.setItem('menuAuth', res.data.data.menuAuthList);
 							localStorage.setItem('menu_info', JSON.stringify(res.data.data.menuInfoDtos));
 							router.push('/dashboard');
+							setTimeout(() => {
+								window.location.reload();
+							}, 1);
 						} else {
 							localStorage.setItem('editAuth', 'false');
 							ElMessage.error('系统错误，请联系系统管理员！');
 							return false;
 						}
 					});
-					// queryMenu(localStorage.getItem('ms_username') || '').then(res => {
-					// 	if (res.data.code === 200) {
-					// 		localStorage.setItem('menu_info', JSON.stringify(res.data.data));
-					// 		router.push('/');
-					// 	} else {
-					// 		ElMessage.error('系统错误，请联系系统管理员！');
-					// 		return false;
-					// 	}
-					// });
 				} else {
 					ElMessage.error(res.data.message);
 					return false;
