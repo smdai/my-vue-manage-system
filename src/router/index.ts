@@ -28,7 +28,7 @@ function getRoutesFromLocalStorage() {
             component: () => import(/* webpackChunkName: "403" */ '../views/403.vue')
         },
     ];
-    return routeList;
+        return routeList;
 }
 const modules = import.meta.glob(['../views/*.vue', '../views/**/*.vue'])
 
