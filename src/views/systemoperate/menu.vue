@@ -24,19 +24,17 @@
 				:row-class-name="tableRowClassName">
 				<el-table-column prop="menuId" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="menuName" label="菜单名称"></el-table-column>
-				<el-table-column prop="menuLevel" label="层级"></el-table-column>
-				<el-table-column prop="componentUrl" label="url"></el-table-column>
-				<el-table-column prop="status" label="状态">
+				<el-table-column prop="menuLevel" label="层级" width="60"></el-table-column>
+				<el-table-column prop="componentUrl" label="url" width="300"></el-table-column>
+				<el-table-column prop="status" label="状态" class="red">
 					<template #default="scope">
-						<el-select v-model="scope.row.status" style="width:100%" disabled>
-							<el-option v-for="item in dics.status" :key="item.key" :label="item.value" :value="item.key">
-							</el-option>
-						</el-select>
+						<div :style="getStatusStyle(scope.row.status)">{{ transformDics(dics.status, scope.row.status) }}
+						</div>
 					</template>
 				</el-table-column>
 				<el-table-column prop="sortNo" label="排序"></el-table-column>
-				<el-table-column prop="inputTime" label="录入时间"></el-table-column>
-				<el-table-column prop="updateTime" label="更新时间"></el-table-column>
+				<el-table-column prop="inputTime" label="录入时间" width="120"></el-table-column>
+				<el-table-column prop="updateTime" label="更新时间" width="120"></el-table-column>
 				<el-table-column label="操作" width="220" align="center" v-if=editAuth>
 					<template #default="scope">
 						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-if=editAuth>
@@ -55,8 +53,8 @@
 		</div>
 
 		<!-- 编辑弹出框 -->
-		<el-dialog title="编辑" v-model="editVisible" width="30%">
-			<el-form :model="form" :rules="rules" ref="editForm" label-width="90px">
+		<el-dialog title="编辑" v-model="editVisible" width="40%">
+			<el-form :model="form" :rules="rules" ref="editForm" label-width="110px">
 				<el-form-item label="id" v-if="false">
 					<el-input v-model="form.menuId" disabled></el-input>
 				</el-form-item>
@@ -84,7 +82,7 @@
 				<el-form-item label="页面路径" prop="componentUrl">
 					<el-input v-model="form.componentUrl"></el-input>
 				</el-form-item>
-				<el-form-item label="状态" prop="status">
+				<el-form-item label="状态" prop="status" v-if="false">
 					<el-input v-model="form.status"></el-input>
 				</el-form-item>
 				<el-form-item label="排序" prop="sortNo">
@@ -130,6 +128,30 @@ interface TableItem {
 	updateTime: string
 }
 const rules: FormRules = {
+	menuName: [
+		{ required: true, message: "请输入菜单名称" }
+	],
+	// upMenuId: [
+	// 	{ required: true, message: "请输入上级菜单id" }
+	// ],
+	menuLevel: [
+		{ required: true, message: "请输入层级" }
+	],
+	menuUrl: [
+		{ required: true, message: "请输入url" }
+	],
+	routeName: [
+		{ required: true, message: "请输入路由名称" }
+	],
+	// menuType: [
+	// 	{ required: true, message: "请输入菜单类型" }
+	// ],
+	componentUrl: [
+		{ required: true, message: "请输入vue路径" }
+	],
+	sortNo: [
+		{ required: true, message: "请输入排序号" }
+	]
 
 };
 const query = reactive({
@@ -232,6 +254,7 @@ const handleDelete = (row: any) => {
 	})
 		.then(() => {
 			form.menuId = row.menuId;
+			form.status = row.status;
 			deleteData(
 				form
 			).then(res => {
@@ -287,6 +310,12 @@ const getDics = () => {
 	});
 }
 getDics();
+// 字典翻译
+const transformDics = (dic: { key: string; value: string }[], key: string): string => {
+	const item = dic.find(item => item.key === key);
+	return item ? item.value : "";
+};
+
 const tableRowClassName = ({
 	row,
 	rowIndex,
@@ -298,6 +327,12 @@ const tableRowClassName = ({
 		return 'level-one'
 	}
 	return ''
+}
+const getStatusStyle = (status: string) => {
+	if (status === "0") {
+		return { color: 'red' };
+	}
+	return {};
 }
 </script>
 
