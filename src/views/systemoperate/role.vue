@@ -2,7 +2,7 @@
 	<div>
 		<div class="container">
 			<div class="handle-box">
-				<el-input v-model="query.userName" placeholder="用户名称" class="handle-input mr10"></el-input>
+				<el-input v-model="query.roleName" placeholder="角色名称" class="handle-input mr10"></el-input>
 				<el-select v-model="query.status" class="m-2" placeholder="状态">
 					<el-option v-for="item in dics.status" :key="item.key" :label="item.value" :value="item.key" />
 				</el-select>
@@ -19,8 +19,8 @@
 			</div>
 
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
-				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-				<el-table-column prop="userName" label="用户名称"></el-table-column>、
+				<el-table-column prop="roleId" label="ID" width="55" align="center"></el-table-column>
+				<el-table-column prop="roleName" label="角色名称"></el-table-column>、
 				<el-table-column prop="status" label="状态">
 					<template #default="scope">
 						<div :style="getStatusStyle(scope.row.status)">{{ transformDics(dics.status, scope.row.status) }}
@@ -49,11 +49,11 @@
 		<!-- 编辑弹出框 -->
 		<el-dialog title="编辑" v-model="editVisible" width="40%">
 			<el-form :model="form" :rules="rules" ref="editForm" label-width="110px">
-				<el-form-item label="id" v-if="false">
-					<el-input v-model="form.id" disabled></el-input>
+				<el-form-item label="roleId" v-if="false">
+					<el-input v-model="form.roleId" disabled></el-input>
 				</el-form-item>
-				<el-form-item label="用户名称" prop="userName">
-					<el-input v-model="form.userName" placeholder=""></el-input>
+				<el-form-item label="角色名称" prop="roleName">
+					<el-input v-model="form.roleName" placeholder=""></el-input>
 				</el-form-item>
 				<el-form-item label="状态" prop="status" v-if="false">
 					<el-input v-model="form.status"></el-input>
@@ -73,7 +73,7 @@
 import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
-import { fetchData, insert, update, deleteData } from '../../api/user';
+import { fetchData, insert, update, deleteData } from '../../api/role';
 import { errorInfo } from '../../constants/error';
 import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
@@ -81,8 +81,8 @@ const reload = inject('reload') as { reload: () => void };
 const editAuth = localStorage.getItem('editAuth') === 'true';
 import { queryLibraries } from '../../api/codelibrary';
 interface TableItem {
-	id: number,
-	userName: string,
+	roleId: number,
+	roleName: string,
 	status: string,
 	inputUser: string,
 	inputTime: string,
@@ -90,12 +90,12 @@ interface TableItem {
 	updateTime: string
 }
 const rules: FormRules = {
-	userName: [
-		{ required: true, message: "请输入用户名称" }
+	roleName: [
+		{ required: true, message: "请输入角色名称" }
 	]
 };
 const query = reactive({
-	userName: '',
+	roleName: '',
 	status: '',
 	pageIndex: 1,
 	pageSize: 10
@@ -121,15 +121,15 @@ const handleSearch = () => {
 };
 // 重置操作
 const clearQuery = () => {
-	query.userName = '';
+	query.roleName = '';
 	query.pageIndex = 1;
 	getData();
 };
 //新增操作
 const add = () => {
 	editVisible.value = true;
-	form.id = '',
-		form.userName = '',
+	form.roleId = '',
+		form.roleName = '',
 		form.status = '',
 		form.inputUser = '',
 		form.inputTime = '',
@@ -183,7 +183,7 @@ const handleDelete = (row: any) => {
 		type: 'warning'
 	})
 		.then(() => {
-			form.id = row.id;
+			form.roleId = row.roleId;
 			form.status = row.status;
 			deleteData(
 				form
@@ -204,8 +204,8 @@ const handleDelete = (row: any) => {
 const editVisible = ref(false);
 const insertOrUpdate = ref('')
 let form = reactive({
-	id: '',
-	userName: '',
+	roleId: '',
+	roleName: '',
 	status: '',
 	inputUser: '',
 	inputTime: '',
