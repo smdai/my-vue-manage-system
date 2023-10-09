@@ -7,6 +7,13 @@ export const fetchData = (params: string) => {
         method: 'get'
     });
 }
+export const queryUserNoRoles = (params: string) => {
+    return request({
+        url: '/bztc-study01/api/roleinforesource/queryusernoroles',
+        params: { param: params },
+        method: 'get'
+    });
+}
 export const insert = (params: object) => {
     return request({
         url: '/bztc-study01/api/roleinforesource/insert',

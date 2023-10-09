@@ -16,9 +16,11 @@
 			</div>
 			<div class="handle-box">
 				<el-button type="primary" :icon="Plus" @click="add" v-if=editAuth>新增</el-button>
+				<el-button type="primary" :icon="Connection" @click="editRole" v-if=editAuth>角色</el-button>
 			</div>
 
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
+				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
 				<el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="userName" label="用户名称"></el-table-column>、
 				<el-table-column prop="status" label="状态">
@@ -66,20 +68,63 @@
 				</span>
 			</template>
 		</el-dialog>
+
+		<!-- 角色弹出框 -->
+		<el-dialog title="关联角色" v-model="roleVisible" width="40%">
+			<div class="handle-box">
+				<el-button type="primary" :icon="Plus" @click="addRole" v-if=editAuth>添加</el-button>
+				<el-button type="danger" :icon="Minus" @click="delRole" v-if=editAuth>删除</el-button>
+			</div>
+			<el-table :data="tableRoleData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
+				@selection-change="handleRoleSelectionChange">
+				<el-table-column type="selection" width="55" />
+				<el-table-column prop="roleId" label="角色编号" width="200" align="center"></el-table-column>
+				<el-table-column prop="roleName" label="角色名称" width="400" align="center"></el-table-column>
+			</el-table>
+
+			<div class="pagination">
+				<el-pagination background layout="total, prev, pager, next" :current-page="roleQuery.pageIndex"
+					:page-size="roleQuery.pageSize" :total="rolePageTotal"
+					@current-change="handleRolePageChange"></el-pagination>
+			</div>
+		</el-dialog>
+		<!-- 角色勾选弹出框 -->
+		<el-dialog title="添加角色" v-model="addRoleVisible" width="40%">
+			<el-table :data="tableAddRoleData" border class="table" ref="multipleTable"
+				header-cell-class-name="table-header" @selection-change="handleSelectionChange">
+				<el-table-column type="selection" width="55" />
+				<el-table-column prop="roleId" label="角色编号" width="200" align="center"></el-table-column>
+				<el-table-column prop="roleName" label="角色名称" width="460" align="center"></el-table-column>
+			</el-table>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="addRoleVisible = false">取 消</el-button>
+					<el-button type="primary" @click="saveUserRole">确 定</el-button>
+				</span>
+			</template>
+			<div class="pagination">
+				<el-pagination background layout="total, prev, pager, next" :current-page="addRoleQuery.pageIndex"
+					:page-size="addRoleQuery.pageSize" :total="addRolePageTotal"
+					@current-change="handleRolePageChange"></el-pagination>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
 <script setup lang="ts" name="basetable">
 import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus, Minus, Connection } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/user';
+import { queryUserRole, insertUserRole, deleteUserRole } from '../../api/userrole';
+import { queryUserNoRoles } from '../../api/role';
 import { errorInfo } from '../../constants/error';
 import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
 const reload = inject('reload') as { reload: () => void };
 const editAuth = localStorage.getItem('editAuth') === 'true';
 import { queryLibraries } from '../../api/codelibrary';
+import { nextTick } from 'vue-demi'
 interface TableItem {
 	id: number,
 	userName: string,
@@ -88,6 +133,10 @@ interface TableItem {
 	inputTime: string,
 	updateUser: string,
 	updateTime: string
+}
+interface RoleTableItem {
+	roleId: number,
+	roleName: string,
 }
 const rules: FormRules = {
 	userName: [
@@ -100,9 +149,27 @@ const query = reactive({
 	pageIndex: 1,
 	pageSize: 10
 });
+const roleQuery = reactive({
+	userId: '',
+	pageIndex: 1,
+	pageSize: 10
+});
+const addRoleQuery = reactive({
+	userId: '',
+	pageIndex: 1,
+	pageSize: 10
+});
 const tableData = ref<TableItem[]>([]);
+const tableRoleData = ref<RoleTableItem[]>([]);
+const tableAddRoleData = ref<RoleTableItem[]>([]);
 const pageTotal = ref(0);
-
+const rolePageTotal = ref(0);
+const addRolePageTotal = ref(0);
+let currentRow: any = [];// 用于存储当前选中的行数据
+const handleRowClick = (row: []) => {
+	// 通过row-click事件获取当前点击的行数据
+	currentRow = row;
+};
 // 获取表格数据
 const getData = () => {
 	fetchData(
@@ -113,7 +180,53 @@ const getData = () => {
 	});
 };
 getData();
-
+const getUserRoleData = () => {
+	roleQuery.userId = currentRow.id;
+	queryUserRole(
+		JSON.stringify(roleQuery)
+	).then(res => {
+		if (res.data.code === 200) {
+			tableRoleData.value = res.data.data;
+			rolePageTotal.value = res.data.total;
+			roleVisible.value = true;
+		} else {
+			ElMessage.error(res.data.message);
+		}
+	});
+}
+const getUserNoRoleData = () => {
+	addRoleQuery.userId = currentRow.id;
+	queryUserNoRoles(
+		JSON.stringify(addRoleQuery)
+	).then(res => {
+		if (res.data.code === 200) {
+			tableAddRoleData.value = res.data.data;
+			addRolePageTotal.value = res.data.total;
+			addRoleVisible.value = true;
+		} else {
+			ElMessage.error(res.data.message);
+		}
+	});
+}
+const saveUserRole = (rows: RoleTableItem[]) => {
+	insertUserRole(multipleSelection.value, currentRow.id).then(res => {
+		if (res.data.code === 200) {
+			ElMessage.success("添加成功。");
+			addRoleVisible.value = false;
+			getUserRoleData();
+		} else {
+			ElMessage.error(res.data.message);
+		}
+	})
+}
+const multipleSelection = ref<RoleTableItem[]>([]);
+const multipleRoleSelection = ref<RoleTableItem[]>([]);
+const handleSelectionChange = (val: RoleTableItem[]) => {
+	multipleSelection.value = val;
+}
+const handleRoleSelectionChange = (val: RoleTableItem[]) => {
+	multipleRoleSelection.value = val;
+}
 // 查询操作
 const handleSearch = () => {
 	query.pageIndex = 1;
@@ -137,10 +250,36 @@ const add = () => {
 		form.updateTime = '',
 		insertOrUpdate.value = '1';
 };
+const editRole = () => {
+	nextTick(() => {
+		// 在这里进行 DOM 更新
+		getUserRoleData();
+	});
+}
+const addRole = () => {
+	nextTick(() => {
+		getUserNoRoleData();
+	});
+}
+const delRole = () => {
+	deleteUserRole(multipleRoleSelection.value, currentRow.id).then(res => {
+		if (res.data.code === 200) {
+			ElMessage.success("删除成功。");
+			getUserRoleData();
+		} else {
+			ElMessage.error(res.data.message);
+		}
+	});
+}
 // 分页导航
 const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
+};
+// 分页导航
+const handleRolePageChange = (val: number) => {
+	roleQuery.pageIndex = val;
+	getUserRoleData();
 };
 const saveEdit = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
@@ -202,6 +341,8 @@ const handleDelete = (row: any) => {
 
 // 表格编辑时弹窗和保存
 const editVisible = ref(false);
+const roleVisible = ref(false);
+const addRoleVisible = ref(false);
 const insertOrUpdate = ref('')
 let form = reactive({
 	id: '',
