@@ -28,3 +28,10 @@ export const deleteData = (params: object) => {
         method: 'post'
     });
 };
+export const queryUsersNoRoles = (params: string) => {
+    return request({
+        url: '/bztc-study01/api/userinforesource/queryusersnoroles',
+        params: { param: params },
+        method: 'get'
+    });
+}

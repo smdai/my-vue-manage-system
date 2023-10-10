@@ -16,9 +16,11 @@
 			</div>
 			<div class="handle-box">
 				<el-button type="primary" :icon="Plus" @click="add" v-if=editAuth>新增</el-button>
+				<el-button type="primary" :icon="Connection" @click="relativeUsers" v-if=editAuth>关联用户</el-button>
 			</div>
 
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header">
+			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
+				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
 				<el-table-column prop="roleId" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="roleName" label="角色名称"></el-table-column>、
 				<el-table-column prop="status" label="状态">
@@ -66,14 +68,55 @@
 				</span>
 			</template>
 		</el-dialog>
+		<!-- 关联用户弹出框 -->
+		<el-dialog title="关联用户" v-model="relativeUsersVisible" width="40%">
+			<div class="handle-box">
+				<el-button type="primary" :icon="Plus" @click="addRelativeUsers" v-if=editAuth>添加</el-button>
+				<el-button type="danger" :icon="Minus" @click="delRelativeUsers" v-if=editAuth>删除</el-button>
+			</div>
+			<el-table :data="relativeUsersTableData" border class="table" ref="multipleTable"
+				header-cell-class-name="table-header" @selection-change="handlerelativeUsersSelectionChange">
+				<el-table-column type="selection" width="55" />
+				<el-table-column prop="userId" label="用户编号" width="200" align="center"></el-table-column>
+				<el-table-column prop="userName" label="用户名称" width="400" align="center"></el-table-column>
+			</el-table>
+
+			<div class="pagination">
+				<el-pagination background layout="total, prev, pager, next" :current-page="relativeUsersQuery.pageIndex"
+					:page-size="relativeUsersQuery.pageSize" :total="relativeUsersPageTotal"
+					@current-change="relativeUsersHandlePageChange"></el-pagination>
+			</div>
+		</el-dialog>
+		<!-- 用户勾选弹出框 -->
+		<el-dialog title="添加用户" v-model="addUsersVisible" width="40%">
+			<el-table :data="addUsersTableData" border class="table" ref="multipleTable"
+				header-cell-class-name="table-header" @selection-change="handleSelectionChange">
+				<el-table-column type="selection" width="55" />
+				<el-table-column prop="id" label="用户编号" width="200" align="center"></el-table-column>
+				<el-table-column prop="userName" label="用户名称" width="460" align="center"></el-table-column>
+			</el-table>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="addUsersVisible = false">取 消</el-button>
+					<el-button type="primary" @click="saveRelativeUsers">确 定</el-button>
+				</span>
+			</template>
+			<div class="pagination">
+				<el-pagination background layout="total, prev, pager, next" :current-page="addUserQuery.pageIndex"
+					:page-size="addUserQuery.pageSize" :total="addUserPageTotal"
+					@current-change="handleUserPageChange"></el-pagination>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
 <script setup lang="ts" name="basetable">
 import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus, Connection, Minus, Collection } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/role';
+import { queryUserListByRoleId, insertRoleUser,deleteRoleUser } from '../../api/userrole';
+import { queryUsersNoRoles } from '../../api/user';
 import { errorInfo } from '../../constants/error';
 import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
@@ -89,6 +132,10 @@ interface TableItem {
 	updateUser: string,
 	updateTime: string
 }
+interface relativeUsersItem {
+	id: number,
+	user_name: string
+}
 const rules: FormRules = {
 	roleName: [
 		{ required: true, message: "请输入角色名称" }
@@ -100,9 +147,28 @@ const query = reactive({
 	pageIndex: 1,
 	pageSize: 10
 });
+const relativeUsersQuery = reactive({
+	roleId: '',
+	pageIndex: 1,
+	pageSize: 10
+});
+const addUserQuery = reactive({
+	roleId: '',
+	pageIndex: 1,
+	pageSize: 10
+})
 const tableData = ref<TableItem[]>([]);
+const relativeUsersTableData = ref<relativeUsersItem[]>([]);
+const addUsersTableData = ref<relativeUsersItem[]>([]);
 const pageTotal = ref(0);
-
+const relativeUsersPageTotal = ref(0);
+const addUserPageTotal = ref(0);
+const relativeUsersVisible = ref(false);
+const addUsersVisible = ref(false);
+const multipleSelection = ref<relativeUsersItem[]>([]);
+const handleSelectionChange = (val: relativeUsersItem[]) => {
+	multipleSelection.value = val;
+}
 // 获取表格数据
 const getData = () => {
 	fetchData(
@@ -113,7 +179,48 @@ const getData = () => {
 	});
 };
 getData();
-
+const delRelativeUsers = () => {
+	// 二次确认删除
+	ElMessageBox.confirm('确定要删除吗？', '提示', {
+		type: 'warning'
+	})
+		.then(() => {
+			deleteRoleUser(multipleRelativeUsersSelection.value, currentRow.roleId).then(res => {
+				if (res.data.code === 200) {
+					ElMessage.success("删除成功。");
+					getUserRoleData();
+				} else {
+					ElMessage.error(res.data.message);
+				}
+			});
+		})
+		.catch(() => {
+			ElMessage.error("系统异常！");
+		});
+}
+const addRelativeUsers = () => {
+	addUserQuery.roleId = currentRow.roleId;
+	queryUsersNoRoles(JSON.stringify(addUserQuery)).then(res => {
+		if (res.data.code === 200) {
+			addUsersTableData.value = res.data.data;
+			addUserPageTotal.value = res.data.total;
+			addUsersVisible.value = true;
+		} else {
+			ElMessage.error(res.data.message);
+		}
+	})
+}
+const saveRelativeUsers = () => {
+	insertRoleUser(multipleSelection.value, currentRow.roleId).then(res => {
+		if (res.data.code === 200) {
+			ElMessage.success("添加成功。");
+			addUsersVisible.value = false;
+			getUserRoleData();
+		} else {
+			ElMessage.error(res.data.message);
+		}
+	})
+}
 // 查询操作
 const handleSearch = () => {
 	query.pageIndex = 1;
@@ -137,10 +244,50 @@ const add = () => {
 		form.updateTime = '',
 		insertOrUpdate.value = '1';
 };
+let currentRow: any = {};// 用于存储当前选中的行数据
+const handleRowClick = (row: []) => {
+	// 通过row-click事件获取当前点击的行数据
+	currentRow = row;
+};
+const relativeUsers = () => {
+	if (Object.keys(currentRow).length === 0) {
+		ElMessage.error('请选择一条数据。');
+		return;
+	}
+	getUserRoleData();
+}
+const getUserRoleData = () => {
+	relativeUsersQuery.roleId = currentRow.roleId;
+	queryUserListByRoleId(
+		JSON.stringify(relativeUsersQuery)
+	).then(res => {
+		if (res.data.code === 200) {
+			relativeUsersTableData.value = res.data.data;
+			relativeUsersPageTotal.value = res.data.total;
+			relativeUsersVisible.value = true;
+		} else {
+			ElMessage.error(res.data.message);
+		}
+	});
+}
+const multipleRelativeUsersSelection = ref<relativeUsersItem[]>([]);
+const handlerelativeUsersSelectionChange = (val: relativeUsersItem[]) => {
+	multipleRelativeUsersSelection.value = val;
+}
 // 分页导航
 const handlePageChange = (val: number) => {
 	query.pageIndex = val;
 	getData();
+};
+// 分页导航
+const relativeUsersHandlePageChange = (val: number) => {
+	relativeUsersQuery.pageIndex = val;
+	getUserRoleData();
+};
+// 分页导航
+const handleUserPageChange = (val: number) => {
+	addUserQuery.pageIndex = val;
+	getUserRoleData();
 };
 const saveEdit = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
@@ -192,8 +339,10 @@ const handleDelete = (row: any) => {
 					ElMessage.success('删除成功');
 					//@ts-ignore
 					reload();
-				} else {
-					ElMessage.error(errorInfo.deleteError)
+				} else if(res.data.code){
+					ElMessage.error(res.data.message);
+				}else {
+					ElMessage.error(errorInfo.deleteError);
 				}
 			});
 		})

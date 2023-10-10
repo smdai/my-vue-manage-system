@@ -16,7 +16,7 @@
 			</div>
 			<div class="handle-box">
 				<el-button type="primary" :icon="Plus" @click="add" v-if=editAuth>新增</el-button>
-				<el-button type="primary" :icon="Connection" @click="editRole" v-if=editAuth>角色</el-button>
+				<el-button type="primary" :icon="Connection" @click="editRole" v-if=editAuth>关联角色</el-button>
 			</div>
 
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
@@ -124,7 +124,6 @@ import type { FormInstance, FormRules } from 'element-plus';
 const reload = inject('reload') as { reload: () => void };
 const editAuth = localStorage.getItem('editAuth') === 'true';
 import { queryLibraries } from '../../api/codelibrary';
-import { nextTick } from 'vue-demi'
 interface TableItem {
 	id: number,
 	userName: string,
@@ -165,7 +164,7 @@ const tableAddRoleData = ref<RoleTableItem[]>([]);
 const pageTotal = ref(0);
 const rolePageTotal = ref(0);
 const addRolePageTotal = ref(0);
-let currentRow: any = [];// 用于存储当前选中的行数据
+let currentRow: any = {};// 用于存储当前选中的行数据
 const handleRowClick = (row: []) => {
 	// 通过row-click事件获取当前点击的行数据
 	currentRow = row;
@@ -251,25 +250,34 @@ const add = () => {
 		insertOrUpdate.value = '1';
 };
 const editRole = () => {
-	nextTick(() => {
-		// 在这里进行 DOM 更新
-		getUserRoleData();
-	});
+	if (Object.keys(currentRow).length === 0) {
+		ElMessage.error('请选择一条数据。');
+		return;
+	}
+	getUserRoleData();
 }
 const addRole = () => {
-	nextTick(() => {
-		getUserNoRoleData();
-	});
+	getUserNoRoleData();
 }
 const delRole = () => {
-	deleteUserRole(multipleRoleSelection.value, currentRow.id).then(res => {
-		if (res.data.code === 200) {
-			ElMessage.success("删除成功。");
-			getUserRoleData();
-		} else {
-			ElMessage.error(res.data.message);
-		}
-	});
+	// 二次确认删除
+	ElMessageBox.confirm('确定要删除吗？', '提示', {
+		type: 'warning'
+	})
+		.then(() => {
+			deleteUserRole(multipleRoleSelection.value, currentRow.id).then(res => {
+				if (res.data.code === 200) {
+					ElMessage.success("删除成功。");
+					getUserRoleData();
+				} else {
+					ElMessage.error(res.data.message);
+				}
+			});
+		})
+		.catch(() => {
+			ElMessage.error("系统异常！");
+		});
+
 }
 // 分页导航
 const handlePageChange = (val: number) => {
