@@ -1,13 +1,12 @@
 import request from '../utils/request';
 
-export const queryMenu = (userName: String) => {
-    return request({
-        url: '/bztc-study01/api/menuInfoResource/querymenu',
-        params: { userName: userName },
-        method: 'get'
-    });
-};
-
+// export const queryMenu = (userName: String) => {
+//     return request({
+//         url: '/bztc-study01/api/menuInfoResource/querymenu',
+//         params: { userName: userName },
+//         method: 'get'
+//     });
+// };
 export const fetchData = (params: string) => {
     return request({
         url: '/bztc-study01/api/menuInfoResource/querybypage',

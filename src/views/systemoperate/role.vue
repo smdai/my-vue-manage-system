@@ -1,128 +1,150 @@
 <template>
-	<div>
-		<div class="container">
-			<div class="handle-box">
-				<el-input v-model="query.roleName" placeholder="角色名称" class="handle-input mr10"></el-input>
-				<el-select v-model="query.status" class="m-2" placeholder="状态">
-					<el-option v-for="item in dics.status" :key="item.key" :label="item.value" :value="item.key" />
-				</el-select>
-				<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
-				<el-button type="primary" @click="clearQuery">
-					<el-icon>
-						<Switch />
-					</el-icon>
-					重置
-				</el-button>
-			</div>
-			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add" v-if=editAuth>新增</el-button>
-				<el-button type="primary" :icon="Connection" @click="relativeUsers" v-if=editAuth>关联用户</el-button>
-			</div>
+	<div class="common-layout">
+		<el-container>
+			<el-main class="container">
+				<div class="handle-box">
+					<el-input v-model="query.roleName" placeholder="角色名称" class="handle-input mr10"></el-input>
+					<el-select v-model="query.status" class="m-2" placeholder="状态">
+						<el-option v-for="item in dics.status" :key="item.key" :label="item.value" :value="item.key" />
+					</el-select>
+					<el-button type="primary" :icon="Search" @click="handleSearch">搜索</el-button>
+					<el-button type="primary" @click="clearQuery">
+						<el-icon>
+							<Switch />
+						</el-icon>
+						重置
+					</el-button>
+				</div>
+				<div class="handle-box">
+					<el-button type="primary" :icon="Plus" @click="add" v-if=editAuth>新增</el-button>
+					<el-button type="primary" :icon="Connection" @click="relativeUsers" v-if=editAuth>关联用户</el-button>
+				</div>
 
-			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
-				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
-				<el-table-column prop="roleId" label="ID" width="55" align="center"></el-table-column>
-				<el-table-column prop="roleName" label="角色名称"></el-table-column>、
-				<el-table-column prop="status" label="状态">
-					<template #default="scope">
-						<div :style="getStatusStyle(scope.row.status)">{{ transformDics(dics.status, scope.row.status) }}
-						</div>
+				<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
+					@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
+					<el-table-column prop="roleId" label="ID" width="55" align="center"></el-table-column>
+					<el-table-column prop="roleName" label="角色名称"></el-table-column>、
+					<el-table-column prop="status" label="状态">
+						<template #default="scope">
+							<div :style="getStatusStyle(scope.row.status)">{{ transformDics(dics.status,
+								scope.row.status) }}
+							</div>
+						</template>
+					</el-table-column>
+					<el-table-column prop="inputTime" label="录入时间"></el-table-column>
+					<el-table-column prop="updateTime" label="更新时间"></el-table-column>
+					<el-table-column label="操作" width="220" align="center" v-if=editAuth>
+						<template #default="scope">
+							<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-if=editAuth>
+								编辑
+							</el-button>
+							<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row)" v-if=editAuth>
+								删除
+							</el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+				<div class="pagination">
+					<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
+						:page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
+				</div>
+
+				<!-- 编辑弹出框 -->
+				<el-dialog title="编辑" v-model="editVisible" width="40%">
+					<el-form :model="form" :rules="rules" ref="editForm" label-width="110px">
+						<el-form-item label="roleId" v-if="false">
+							<el-input v-model="form.roleId" disabled></el-input>
+						</el-form-item>
+						<el-form-item label="角色名称" prop="roleName">
+							<el-input v-model="form.roleName" placeholder=""></el-input>
+						</el-form-item>
+						<el-form-item label="状态" prop="status" v-if="false">
+							<el-input v-model="form.status"></el-input>
+						</el-form-item>
+					</el-form>
+					<template #footer>
+						<span class="dialog-footer">
+							<el-button @click="editVisible = false">取 消</el-button>
+							<el-button type="primary" @click="saveEdit(editForm)">确 定</el-button>
+						</span>
 					</template>
-				</el-table-column>
-				<el-table-column prop="inputTime" label="录入时间"></el-table-column>
-				<el-table-column prop="updateTime" label="更新时间"></el-table-column>
-				<el-table-column label="操作" width="220" align="center" v-if=editAuth>
-					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-if=editAuth>
-							编辑
-						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row)" v-if=editAuth>
-							删除
-						</el-button>
+				</el-dialog>
+				<!-- 关联用户弹出框 -->
+				<el-dialog title="关联用户" v-model="relativeUsersVisible" width="40%">
+					<div class="handle-box">
+						<el-button type="primary" :icon="Plus" @click="addRelativeUsers" v-if=editAuth>添加</el-button>
+						<el-button type="danger" :icon="Minus" @click="delRelativeUsers" v-if=editAuth>删除</el-button>
+					</div>
+					<el-table :data="relativeUsersTableData" border class="table" ref="multipleTable"
+						header-cell-class-name="table-header" @selection-change="handlerelativeUsersSelectionChange">
+						<el-table-column type="selection" width="55" />
+						<el-table-column prop="userId" label="用户编号" width="200" align="center"></el-table-column>
+						<el-table-column prop="userName" label="用户名称" width="400" align="center"></el-table-column>
+					</el-table>
+
+					<div class="pagination">
+						<el-pagination background layout="total, prev, pager, next"
+							:current-page="relativeUsersQuery.pageIndex" :page-size="relativeUsersQuery.pageSize"
+							:total="relativeUsersPageTotal" @current-change="relativeUsersHandlePageChange"></el-pagination>
+					</div>
+				</el-dialog>
+				<!-- 用户勾选弹出框 -->
+				<el-dialog title="添加用户" v-model="addUsersVisible" width="40%">
+					<el-table :data="addUsersTableData" border class="table" ref="multipleTable"
+						header-cell-class-name="table-header" @selection-change="handleSelectionChange">
+						<el-table-column type="selection" width="55" />
+						<el-table-column prop="id" label="用户编号" width="200" align="center"></el-table-column>
+						<el-table-column prop="userName" label="用户名称" width="460" align="center"></el-table-column>
+					</el-table>
+					<template #footer>
+						<span class="dialog-footer">
+							<el-button @click="addUsersVisible = false">取 消</el-button>
+							<el-button type="primary" @click="saveRelativeUsers">确 定</el-button>
+						</span>
 					</template>
-				</el-table-column>
-			</el-table>
-			<div class="pagination">
-				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
-					:page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
-			</div>
-		</div>
-
-		<!-- 编辑弹出框 -->
-		<el-dialog title="编辑" v-model="editVisible" width="40%">
-			<el-form :model="form" :rules="rules" ref="editForm" label-width="110px">
-				<el-form-item label="roleId" v-if="false">
-					<el-input v-model="form.roleId" disabled></el-input>
-				</el-form-item>
-				<el-form-item label="角色名称" prop="roleName">
-					<el-input v-model="form.roleName" placeholder=""></el-input>
-				</el-form-item>
-				<el-form-item label="状态" prop="status" v-if="false">
-					<el-input v-model="form.status"></el-input>
-				</el-form-item>
-			</el-form>
-			<template #footer>
-				<span class="dialog-footer">
-					<el-button @click="editVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveEdit(editForm)">确 定</el-button>
-				</span>
-			</template>
-		</el-dialog>
-		<!-- 关联用户弹出框 -->
-		<el-dialog title="关联用户" v-model="relativeUsersVisible" width="40%">
-			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="addRelativeUsers" v-if=editAuth>添加</el-button>
-				<el-button type="danger" :icon="Minus" @click="delRelativeUsers" v-if=editAuth>删除</el-button>
-			</div>
-			<el-table :data="relativeUsersTableData" border class="table" ref="multipleTable"
-				header-cell-class-name="table-header" @selection-change="handlerelativeUsersSelectionChange">
-				<el-table-column type="selection" width="55" />
-				<el-table-column prop="userId" label="用户编号" width="200" align="center"></el-table-column>
-				<el-table-column prop="userName" label="用户名称" width="400" align="center"></el-table-column>
-			</el-table>
-
-			<div class="pagination">
-				<el-pagination background layout="total, prev, pager, next" :current-page="relativeUsersQuery.pageIndex"
-					:page-size="relativeUsersQuery.pageSize" :total="relativeUsersPageTotal"
-					@current-change="relativeUsersHandlePageChange"></el-pagination>
-			</div>
-		</el-dialog>
-		<!-- 用户勾选弹出框 -->
-		<el-dialog title="添加用户" v-model="addUsersVisible" width="40%">
-			<el-table :data="addUsersTableData" border class="table" ref="multipleTable"
-				header-cell-class-name="table-header" @selection-change="handleSelectionChange">
-				<el-table-column type="selection" width="55" />
-				<el-table-column prop="id" label="用户编号" width="200" align="center"></el-table-column>
-				<el-table-column prop="userName" label="用户名称" width="460" align="center"></el-table-column>
-			</el-table>
-			<template #footer>
-				<span class="dialog-footer">
-					<el-button @click="addUsersVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveRelativeUsers">确 定</el-button>
-				</span>
-			</template>
-			<div class="pagination">
-				<el-pagination background layout="total, prev, pager, next" :current-page="addUserQuery.pageIndex"
-					:page-size="addUserQuery.pageSize" :total="addUserPageTotal"
-					@current-change="handleUserPageChange"></el-pagination>
-			</div>
-		</el-dialog>
+					<div class="pagination">
+						<el-pagination background layout="total, prev, pager, next" :current-page="addUserQuery.pageIndex"
+							:page-size="addUserQuery.pageSize" :total="addUserPageTotal"
+							@current-change="handleUserPageChange"></el-pagination>
+					</div>
+				</el-dialog>
+			</el-main>
+			<el-aside width="400px">
+				<div class="container">
+					<el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+						<el-tab-pane label="资源权限" name="first">
+							<div class="handle-box">
+								<el-button type="primary" :icon="Plus" @click="saveRelativeAuthResource"
+									v-if=editAuth&&saveRelaAuthSourcevisiable>保存</el-button>
+							</div>
+							<el-tree :data="sourceAuthData" :props="defaultProps" @node-click="handleNodeClick"
+								show-checkbox node-key="objectId" ref="sourceAuthItemRef" default-expand-all/>
+						</el-tab-pane>
+						<el-tab-pane label="数据权限" name="second">
+							待开发
+						</el-tab-pane>
+					</el-tabs>
+				</div>
+			</el-aside>
+		</el-container>
 	</div>
 </template>
 
 <script setup lang="ts" name="basetable">
-import { ref, reactive, stop } from 'vue';
+import { ref, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, Connection, Minus, Collection } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/role';
-import { queryUserListByRoleId, insertRoleUser,deleteRoleUser } from '../../api/userrole';
+import { queryUserListByRoleId, insertRoleUser, deleteRoleUser } from '../../api/userrole';
 import { queryUsersNoRoles } from '../../api/user';
+import { queryAllAuthResContr, queryAuthSourceByRoleId ,save} from '../../api/authrescontr';
 import { errorInfo } from '../../constants/error';
 import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
 const reload = inject('reload') as { reload: () => void };
 const editAuth = localStorage.getItem('editAuth') === 'true';
 import { queryLibraries } from '../../api/codelibrary';
+import type { TabsPaneContext } from 'element-plus'
 interface TableItem {
 	roleId: number,
 	roleName: string,
@@ -136,6 +158,15 @@ interface relativeUsersItem {
 	id: number,
 	user_name: string
 }
+interface sourceAuthItem {
+	objectId: string,
+	sourceId: number,
+	sourceName: string,
+	sourceType: string,
+	children?: sourceAuthItem[],
+	label: string
+}
+const defaultProps = ref<sourceAuthItem[]>([]);
 const rules: FormRules = {
 	roleName: [
 		{ required: true, message: "请输入角色名称" }
@@ -157,7 +188,10 @@ const addUserQuery = reactive({
 	pageIndex: 1,
 	pageSize: 10
 })
+
+const saveRelaAuthSourcevisiable = ref<boolean>(false);
 const tableData = ref<TableItem[]>([]);
+const sourceAuthData = ref<sourceAuthItem[]>([]);
 const relativeUsersTableData = ref<relativeUsersItem[]>([]);
 const addUsersTableData = ref<relativeUsersItem[]>([]);
 const pageTotal = ref(0);
@@ -169,6 +203,7 @@ const multipleSelection = ref<relativeUsersItem[]>([]);
 const handleSelectionChange = (val: relativeUsersItem[]) => {
 	multipleSelection.value = val;
 }
+const sourceAuthItemRef = ref();
 // 获取表格数据
 const getData = () => {
 	fetchData(
@@ -246,9 +281,27 @@ const add = () => {
 };
 let currentRow: any = {};// 用于存储当前选中的行数据
 const handleRowClick = (row: []) => {
-	// 通过row-click事件获取当前点击的行数据
 	currentRow = row;
+	loadRoleAuthSourceTree();
+	saveRelaAuthSourcevisiable.value = true;
 };
+const loadRoleAuthSourceTree = () => {
+	// 查询该角色所拥有的资源权限
+	queryAuthSourceByRoleId(currentRow.roleId).then(res => {
+		if (res.data.code === 200) {
+			console.log("sourceAuthData:", sourceAuthData)
+			let temp = ref<string[]>([])
+			res.data.data.forEach((it:sourceAuthItem) => {
+				if(!transformAuthSourceData.value.get(it.objectId)){
+					temp.value.push(it.objectId)
+				}
+			});
+			sourceAuthItemRef.value!.setCheckedKeys(temp.value, false)
+		} else {
+			ElMessage.error(res.data.message);
+		}
+	})
+}
 const relativeUsers = () => {
 	if (Object.keys(currentRow).length === 0) {
 		ElMessage.error('请选择一条数据。');
@@ -339,9 +392,9 @@ const handleDelete = (row: any) => {
 					ElMessage.success('删除成功');
 					//@ts-ignore
 					reload();
-				} else if(res.data.code){
+				} else if (res.data.code) {
 					ElMessage.error(res.data.message);
-				}else {
+				} else {
 					ElMessage.error(errorInfo.deleteError);
 				}
 			});
@@ -392,6 +445,50 @@ const getStatusStyle = (status: string) => {
 	}
 	return {};
 }
+const activeName = ref('first')
+
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+	console.log(tab, event)
+}
+// -----------------------------------------------------------------
+const transformAuthSourceData = ref(new Map())
+const selectAuthSourceData = () => {
+	queryAllAuthResContr().then(res => {
+		if (res.data.code === 200) {
+			sourceAuthData.value = res.data.data;
+			transform(res.data.data);
+		} else {
+			ElMessage.error(res.data.message);
+		}
+	})
+}
+selectAuthSourceData()
+const transform=(list:sourceAuthItem[])=>{
+	list.forEach((it:sourceAuthItem)=>{
+		if(it.children && it.children.length > 0){
+			transformAuthSourceData.value.set(it.objectId,true);
+			transform(it.children);
+		}else{
+			transformAuthSourceData.value.set(it.objectId,false);
+		}
+	})
+}
+const saveRelativeAuthResource = () => {
+	if(currentRow.status !== '1'){
+		ElMessage.error("该角色状态不正常，无法保存。");
+		return;
+	}
+	save(sourceAuthItemRef.value!.getCheckedNodes(),currentRow.roleId).then(res=>{
+		if (res.data.code === 200) {
+			ElMessage.success(res.data.message);
+		} else {
+			ElMessage.error("保存权限失败。");
+		}
+	})
+}
+const handleNodeClick = () => {
+
+}
 </script>
 
 <style scoped>
@@ -425,5 +522,12 @@ const getStatusStyle = (status: string) => {
 	margin: auto;
 	width: 40px;
 	height: 40px;
+}
+
+.demo-tabs>.el-tabs__content {
+	padding: 32px;
+	color: #6b778c;
+	font-size: 32px;
+	font-weight: 600;
 }
 </style>
