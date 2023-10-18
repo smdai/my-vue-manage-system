@@ -115,10 +115,17 @@
 						<el-tab-pane label="资源权限" name="first">
 							<div class="handle-box">
 								<el-button type="primary" :icon="Plus" @click="saveRelativeAuthResource"
-									v-if=editAuth&&saveRelaAuthSourcevisiable>保存</el-button>
+									v-if="editAuth && saveRelaAuthSourcevisiable"
+									:loading="saveRelaAuthSourceLoading">保存</el-button>
 							</div>
-							<el-tree :data="sourceAuthData" :props="defaultProps" @node-click="handleNodeClick"
-								show-checkbox node-key="objectId" ref="sourceAuthItemRef" default-expand-all/>
+							<el-tree :data="sourceAuthData" @node-click="handleNodeClick" show-checkbox node-key="objectId"
+								ref="sourceAuthItemRef" default-expand-all v-slot="{ node, data }">
+								<span>
+									<el-tag :type="'success'" v-if="data.sourceType === 'M'">M</el-tag>
+									<el-tag :type="'danger'" v-if="data.sourceType === 'C'">C</el-tag>
+									{{ data.label }}
+								</span>
+							</el-tree>
 						</el-tab-pane>
 						<el-tab-pane label="数据权限" name="second">
 							待开发
@@ -132,12 +139,12 @@
 
 <script setup lang="ts" name="basetable">
 import { ref, reactive } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus, Connection, Minus, Collection } from '@element-plus/icons-vue';
+import { ElMessage, ElMessageBox} from 'element-plus';
+import { Delete, Edit, Search, Plus, Connection, Minus } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/role';
 import { queryUserListByRoleId, insertRoleUser, deleteRoleUser } from '../../api/userrole';
 import { queryUsersNoRoles } from '../../api/user';
-import { queryAllAuthResContr, queryAuthSourceByRoleId ,save} from '../../api/authrescontr';
+import { queryAllAuthResContr, queryAuthSourceByRoleId, save } from '../../api/authrescontr';
 import { errorInfo } from '../../constants/error';
 import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
@@ -166,7 +173,7 @@ interface sourceAuthItem {
 	children?: sourceAuthItem[],
 	label: string
 }
-const defaultProps = ref<sourceAuthItem[]>([]);
+
 const rules: FormRules = {
 	roleName: [
 		{ required: true, message: "请输入角色名称" }
@@ -188,7 +195,7 @@ const addUserQuery = reactive({
 	pageIndex: 1,
 	pageSize: 10
 })
-
+const saveRelaAuthSourceLoading = ref(false);
 const saveRelaAuthSourcevisiable = ref<boolean>(false);
 const tableData = ref<TableItem[]>([]);
 const sourceAuthData = ref<sourceAuthItem[]>([]);
@@ -291,8 +298,8 @@ const loadRoleAuthSourceTree = () => {
 		if (res.data.code === 200) {
 			console.log("sourceAuthData:", sourceAuthData)
 			let temp = ref<string[]>([])
-			res.data.data.forEach((it:sourceAuthItem) => {
-				if(!transformAuthSourceData.value.get(it.objectId)){
+			res.data.data.forEach((it: sourceAuthItem) => {
+				if (!transformAuthSourceData.value.get(it.objectId)) {
 					temp.value.push(it.objectId)
 				}
 			});
@@ -463,27 +470,29 @@ const selectAuthSourceData = () => {
 	})
 }
 selectAuthSourceData()
-const transform=(list:sourceAuthItem[])=>{
-	list.forEach((it:sourceAuthItem)=>{
-		if(it.children && it.children.length > 0){
-			transformAuthSourceData.value.set(it.objectId,true);
+const transform = (list: sourceAuthItem[]) => {
+	list.forEach((it: sourceAuthItem) => {
+		if (it.children && it.children.length > 0) {
+			transformAuthSourceData.value.set(it.objectId, true);
 			transform(it.children);
-		}else{
-			transformAuthSourceData.value.set(it.objectId,false);
+		} else {
+			transformAuthSourceData.value.set(it.objectId, false);
 		}
 	})
 }
 const saveRelativeAuthResource = () => {
-	if(currentRow.status !== '1'){
+	saveRelaAuthSourceLoading.value = true;
+	if (currentRow.status !== '1') {
 		ElMessage.error("该角色状态不正常，无法保存。");
 		return;
 	}
-	save(sourceAuthItemRef.value!.getCheckedNodes(),currentRow.roleId).then(res=>{
+	save(sourceAuthItemRef.value!.getCheckedNodes(), currentRow.roleId).then(res => {
 		if (res.data.code === 200) {
-			ElMessage.success(res.data.message);
+			ElMessage.success("保存成功。");
 		} else {
 			ElMessage.error("保存权限失败。");
 		}
+		saveRelaAuthSourceLoading.value = false;
 	})
 }
 const handleNodeClick = () => {
