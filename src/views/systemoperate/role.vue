@@ -23,7 +23,7 @@
 				<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 					@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
 					<el-table-column prop="roleId" label="ID" width="55" align="center"></el-table-column>
-					<el-table-column prop="roleName" label="角色名称"></el-table-column>、
+					<el-table-column prop="roleName" label="角色名称"></el-table-column>
 					<el-table-column prop="status" label="状态">
 						<template #default="scope">
 							<div :style="getStatusStyle(scope.row.status)">{{ transformDics(dics.status,
