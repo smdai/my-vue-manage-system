@@ -17,11 +17,16 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add" v-if=editAuth>新增</el-button>
+				<el-button type="primary" :icon="Plus" @click="add" v-if="buttonVisiableMap.get('menuAdd')">新增</el-button>
+				<el-button type="primary" :icon="Edit" @click="handleEdit"
+					v-if="buttonVisiableMap.get('menuUpdate')">编辑</el-button>
+				<el-button type="danger" :icon="Delete" @click="handleDelete"
+					v-if="buttonVisiableMap.get('menuDelete')">删除</el-button>
 			</div>
 
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
-				:row-class-name="tableRowClassName">
+				:row-class-name="tableRowClassName" @row-click="handleRowClick" :current-row="currentRow"
+				highlight-current-row>
 				<el-table-column prop="menuId" label="ID" width="55" align="center"></el-table-column>
 				<el-table-column prop="menuName" label="菜单名称"></el-table-column>
 				<el-table-column prop="menuLevel" label="层级" width="60"></el-table-column>
@@ -35,16 +40,6 @@
 				<el-table-column prop="sortNo" label="排序"></el-table-column>
 				<el-table-column prop="inputTime" label="录入时间" width="120"></el-table-column>
 				<el-table-column prop="updateTime" label="更新时间" width="120"></el-table-column>
-				<el-table-column label="操作" width="220" align="center" v-if=editAuth>
-					<template #default="scope">
-						<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-if=editAuth>
-							编辑
-						</el-button>
-						<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row)" v-if=editAuth>
-							删除
-						</el-button>
-					</template>
-				</el-table-column>
 			</el-table>
 			<div class="pagination">
 				<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
@@ -105,11 +100,10 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/menu';
 import { errorInfo } from '../../constants/error';
-import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
-const reload = inject('reload') as { reload: () => void };
-const editAuth = localStorage.getItem('editAuth') === 'true';
 import { queryLibraries } from '../../api/codelibrary';
+import { getControlVisiableMap } from '../../method/common';
+let buttonVisiableMap = getControlVisiableMap(['menuAdd', 'menuUpdate', 'menuDelete'])
 interface TableItem {
 	menuId: number,
 	upMenuId: number,
@@ -164,7 +158,11 @@ const query = reactive({
 });
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
-
+let currentRow: any = null;// 用于存储当前选中的行数据
+const handleRowClick = (row: []) => {
+	// 通过row-click事件获取当前点击的行数据
+	currentRow = row;
+};
 // 获取表格数据
 const getData = () => {
 	fetchData(
@@ -222,8 +220,7 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 				).then(res => {
 					if (res.data.code === 200) {
 						ElMessage.success('新增成功');
-						//@ts-ignore
-						reload();
+						getData()
 					} else {
 						ElMessage.error(errorInfo.addError)
 					}
@@ -234,8 +231,7 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 				).then(res => {
 					if (res.data.code === 200) {
 						ElMessage.success('更新成功');
-						//@ts-ignore
-						reload();
+						getData()
 					} else {
 						ElMessage.error(errorInfo.updateError)
 					}
@@ -247,21 +243,24 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 
 };
 // 删除操作
-const handleDelete = (row: any) => {
+const handleDelete = () => {
+	if (!currentRow) {
+		ElMessage.warning('请选择一条数据')
+		return
+	}
 	// 二次确认删除
 	ElMessageBox.confirm('确定要删除吗？', '提示', {
 		type: 'warning'
 	})
 		.then(() => {
-			form.menuId = row.menuId;
-			form.status = row.status;
+			form.menuId = currentRow.menuId;
+			form.status = currentRow.status;
 			deleteData(
 				form
 			).then(res => {
 				if (res.data.code === 200) {
 					ElMessage.success('删除成功');
-					//@ts-ignore
-					reload();
+					getData()
 				} else {
 					ElMessage.error(errorInfo.deleteError)
 				}
@@ -290,10 +289,13 @@ let form = reactive({
 	updateUser: '',
 	updateTime: ''
 });
-let idx: number = -1;
-const handleEdit = (index: number, row: any) => {
-	idx = index;
-	Object.assign(form, row);
+
+const handleEdit = () => {
+	if (!currentRow) {
+		ElMessage.warning('请选择一条数据')
+		return
+	}
+	Object.assign(form, currentRow);
 	editVisible.value = true;
 	insertOrUpdate.value = '2';
 };

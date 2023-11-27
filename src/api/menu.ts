@@ -35,3 +35,9 @@ export const deleteData = (params: object) => {
         method: 'post'
     });
 };
+export const queryAllMenuTree = () => {
+    return request({
+        url: '/bztc-study01/api/menuInfoResource/queryallmenutree',
+        method: 'get'
+    });
+}

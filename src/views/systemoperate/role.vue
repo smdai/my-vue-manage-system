@@ -16,8 +16,14 @@
 					</el-button>
 				</div>
 				<div class="handle-box">
-					<el-button type="primary" :icon="Plus" @click="add" v-if=editAuth>新增</el-button>
-					<el-button type="primary" :icon="Connection" @click="relativeUsers" v-if=editAuth>关联用户</el-button>
+					<el-button type="primary" :icon="Plus" @click="add"
+						v-if="buttonVisiableMap.get('roleAdd')">新增</el-button>
+					<el-button type="primary" :icon="Edit" @click="handleEdit"
+						v-if="buttonVisiableMap.get('roleUpdate')">编辑</el-button>
+					<el-button type="danger" :icon="Delete" @click="handleDelete"
+						v-if="buttonVisiableMap.get('roleDelete')">删除</el-button>
+					<el-button type="primary" :icon="Connection" @click="relativeUsers"
+						v-if="buttonVisiableMap.get('roleUser')">关联用户</el-button>
 				</div>
 
 				<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
@@ -33,16 +39,6 @@
 					</el-table-column>
 					<el-table-column prop="inputTime" label="录入时间"></el-table-column>
 					<el-table-column prop="updateTime" label="更新时间"></el-table-column>
-					<el-table-column label="操作" width="220" align="center" v-if=editAuth>
-						<template #default="scope">
-							<el-button text :icon="Edit" @click="handleEdit(scope.$index, scope.row)" v-if=editAuth>
-								编辑
-							</el-button>
-							<el-button text :icon="Delete" class="red" @click="handleDelete(scope.row)" v-if=editAuth>
-								删除
-							</el-button>
-						</template>
-					</el-table-column>
 				</el-table>
 				<div class="pagination">
 					<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
@@ -72,8 +68,10 @@
 				<!-- 关联用户弹出框 -->
 				<el-dialog title="关联用户" v-model="relativeUsersVisible" width="40%">
 					<div class="handle-box">
-						<el-button type="primary" :icon="Plus" @click="addRelativeUsers" v-if=editAuth>添加</el-button>
-						<el-button type="danger" :icon="Minus" @click="delRelativeUsers" v-if=editAuth>删除</el-button>
+						<el-button type="primary" :icon="Plus" @click="addRelativeUsers"
+							v-if="buttonVisiableMap.get('roleUserListQuery')">添加</el-button>
+						<el-button type="danger" :icon="Minus" @click="delRelativeUsers"
+							v-if="buttonVisiableMap.get('roleUserDelete')">删除</el-button>
 					</div>
 					<el-table :data="relativeUsersTableData" border class="table" ref="multipleTable"
 						header-cell-class-name="table-header" @selection-change="handlerelativeUsersSelectionChange">
@@ -99,7 +97,8 @@
 					<template #footer>
 						<span class="dialog-footer">
 							<el-button @click="addUsersVisible = false">取 消</el-button>
-							<el-button type="primary" @click="saveRelativeUsers">确 定</el-button>
+							<el-button type="primary" @click="saveRelativeUsers"
+								v-if="buttonVisiableMap.get('roleUserAdd')">确 定</el-button>
 						</span>
 					</template>
 					<div class="pagination">
@@ -115,7 +114,7 @@
 						<el-tab-pane label="资源权限" name="first">
 							<div class="handle-box">
 								<el-button type="primary" :icon="Plus" @click="saveRelativeAuthResource"
-									v-if="editAuth && saveRelaAuthSourcevisiable"
+									v-if="buttonVisiableMap.get('roleAuthSave') && saveRelaAuthSourcevisiable"
 									:loading="saveRelaAuthSourceLoading">保存</el-button>
 							</div>
 							<el-tree :data="sourceAuthData" @node-click="handleNodeClick" show-checkbox node-key="objectId"
@@ -139,19 +138,18 @@
 
 <script setup lang="ts" name="basetable">
 import { ref, reactive } from 'vue';
-import { ElMessage, ElMessageBox} from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus, Connection, Minus } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/role';
 import { queryUserListByRoleId, insertRoleUser, deleteRoleUser } from '../../api/userrole';
 import { queryUsersNoRoles } from '../../api/user';
 import { queryAllAuthResContr, queryAuthSourceByRoleId, save } from '../../api/authrescontr';
 import { errorInfo } from '../../constants/error';
-import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
-const reload = inject('reload') as { reload: () => void };
-const editAuth = localStorage.getItem('editAuth') === 'true';
 import { queryLibraries } from '../../api/codelibrary';
 import type { TabsPaneContext } from 'element-plus'
+import { getControlVisiableMap } from '../../method/common';
+let buttonVisiableMap = getControlVisiableMap(['roleAdd', 'roleUpdate', 'roleDelete', 'roleUser', 'roleUserDelete', 'roleUserListQuery', 'roleUserListQuery', 'roleUserAdd', 'roleAuthSave'])
 interface TableItem {
 	roleId: number,
 	roleName: string,
@@ -237,7 +235,6 @@ const delRelativeUsers = () => {
 			});
 		})
 		.catch(() => {
-			ElMessage.error("系统异常！");
 		});
 }
 const addRelativeUsers = () => {
@@ -286,17 +283,17 @@ const add = () => {
 		form.updateTime = '',
 		insertOrUpdate.value = '1';
 };
-let currentRow: any = {};// 用于存储当前选中的行数据
+let currentRow: any = null;// 用于存储当前选中的行数据
 const handleRowClick = (row: []) => {
 	currentRow = row;
 	loadRoleAuthSourceTree();
 	saveRelaAuthSourcevisiable.value = true;
 };
 const loadRoleAuthSourceTree = () => {
+	saveRelaAuthSourceLoading.value = true
 	// 查询该角色所拥有的资源权限
 	queryAuthSourceByRoleId(currentRow.roleId).then(res => {
 		if (res.data.code === 200) {
-			console.log("sourceAuthData:", sourceAuthData)
 			let temp = ref<string[]>([])
 			res.data.data.forEach((it: sourceAuthItem) => {
 				if (!transformAuthSourceData.value.get(it.objectId)) {
@@ -307,10 +304,11 @@ const loadRoleAuthSourceTree = () => {
 		} else {
 			ElMessage.error(res.data.message);
 		}
+		saveRelaAuthSourceLoading.value = false
 	})
 }
 const relativeUsers = () => {
-	if (Object.keys(currentRow).length === 0) {
+	if (!currentRow) {
 		ElMessage.error('请选择一条数据。');
 		return;
 	}
@@ -359,8 +357,7 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 				).then(res => {
 					if (res.data.code === 200) {
 						ElMessage.success('新增成功');
-						//@ts-ignore
-						reload();
+						getData()
 					} else {
 						ElMessage.error(errorInfo.addError)
 					}
@@ -371,8 +368,7 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 				).then(res => {
 					if (res.data.code === 200) {
 						ElMessage.success('更新成功');
-						//@ts-ignore
-						reload();
+						getData()
 					} else {
 						ElMessage.error(errorInfo.updateError)
 					}
@@ -384,21 +380,24 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 
 };
 // 删除操作
-const handleDelete = (row: any) => {
+const handleDelete = () => {
+	if (!currentRow) {
+		ElMessage.error('请选择一条数据。');
+		return;
+	}
 	// 二次确认删除
 	ElMessageBox.confirm('确定要删除吗？', '提示', {
 		type: 'warning'
 	})
 		.then(() => {
-			form.roleId = row.roleId;
-			form.status = row.status;
+			form.roleId = currentRow.roleId;
+			form.status = currentRow.status;
 			deleteData(
 				form
 			).then(res => {
 				if (res.data.code === 200) {
 					ElMessage.success('删除成功');
-					//@ts-ignore
-					reload();
+					getData()
 				} else if (res.data.code) {
 					ElMessage.error(res.data.message);
 				} else {
@@ -421,10 +420,13 @@ let form = reactive({
 	updateUser: '',
 	updateTime: ''
 });
-let idx: number = -1;
-const handleEdit = (index: number, row: any) => {
-	idx = index;
-	Object.assign(form, row);
+
+const handleEdit = () => {
+	if (!currentRow) {
+		ElMessage.error('请选择一条数据。');
+		return;
+	}
+	Object.assign(form, currentRow);
 	editVisible.value = true;
 	insertOrUpdate.value = '2';
 };
@@ -538,5 +540,4 @@ const handleNodeClick = () => {
 	color: #6b778c;
 	font-size: 32px;
 	font-weight: 600;
-}
-</style>
+}</style>

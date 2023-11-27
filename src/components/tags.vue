@@ -49,7 +49,7 @@ const closeTags = (index: number) => {
 	if (item) {
 		delItem.path === route.fullPath && router.push(item.path);
 	} else {
-		router.push('/');
+		router.push('/dashboard');
 	}
 };
 
@@ -75,7 +75,7 @@ onBeforeRouteUpdate(to => {
 // 关闭全部标签
 const closeAll = () => {
 	tags.clearTags();
-	router.push('/');
+	router.push('/dashboard');
 };
 // 关闭其他标签
 const closeOther = () => {

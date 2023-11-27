@@ -13,10 +13,10 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add" v-if=editAuth>新增</el-button>
+				<el-button type="primary" :icon="Plus" @click="add" v-if="buttonVisiableMap.get('groovyParamAdd')">新增</el-button>
 				<el-button type="primary" :icon="View" @click="handleView"> 查看 </el-button>
-				<el-button type="primary" :icon="Edit" @click="handleEdit" v-if=editAuth> 编辑 </el-button>
-				<el-button type="danger" :icon="Delete" @click="handleDelete" v-if=editAuth> 删除 </el-button>
+				<el-button type="primary" :icon="Edit" @click="handleEdit" v-if="buttonVisiableMap.get('groovyParamUpdate')"> 编辑 </el-button>
+				<el-button type="danger" :icon="Delete" @click="handleDelete" v-if="buttonVisiableMap.get('groovyParamDelete')"> 删除 </el-button>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" highlight-current-row>
@@ -114,10 +114,9 @@ import { Delete, Edit, Search, Plus, View } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/rulengparam';
 import { errorInfo } from '../../constants/error';
 import { queryLibraries } from '../../api/codelibrary';
-import { inject } from 'vue-demi';
 import type { FormInstance, FormRules } from 'element-plus';
-const reload = inject('reload') as { reload: () => void };
-const editAuth = localStorage.getItem('editAuth') === 'true';
+import { getControlVisiableMap } from '../../method/common';
+let buttonVisiableMap = getControlVisiableMap(['groovyParamAdd', 'groovyParamUpdate', 'groovyParamDelete'])
 const paramSubClazzVisible = ref(false);
 const saveFlag = ref(true);
 const dics = reactive({
@@ -263,8 +262,7 @@ const handleDelete = () => {
 			).then(res => {
 				if (res.data.code === 200) {
 					ElMessage.success('删除成功');
-					//@ts-ignore
-					reload();
+					getData()
 				} else {
 					ElMessage.error(errorInfo.deleteError)
 				}
@@ -332,8 +330,7 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 				).then(res => {
 					if (res.data.code === 200) {
 						ElMessage.success('新增成功');
-						//@ts-ignore
-						reload();
+						getData()
 					} else {
 						ElMessage.error(errorInfo.addError)
 					}
@@ -344,8 +341,7 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 				).then(res => {
 					if (res.data.code === 200) {
 						ElMessage.success('更新成功');
-						//@ts-ignore
-						reload();
+						getData()
 					} else {
 						ElMessage.error(errorInfo.updateError)
 					}

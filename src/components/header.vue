@@ -72,6 +72,7 @@ const handleCommand = (command: string) => {
 		localStorage.removeItem('ms_username');
 		localStorage.removeItem('menu_info');
 		localStorage.removeItem('token');
+		localStorage.removeItem('control_info');
 		router.push('/login');
 	} else if (command == 'user') {
 		router.push('/user');

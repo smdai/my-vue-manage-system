@@ -83,6 +83,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 							localStorage.setItem('editAuth', res.data.data.editAuth);
 							localStorage.setItem('menuAuth', res.data.data.menuAuthList);
 							localStorage.setItem('menu_info', JSON.stringify(res.data.data.menuInfoDtos));
+							localStorage.setItem('control_info', JSON.stringify(res.data.data.controlInfoDtos));
 							router.push('/dashboard');
 							setTimeout(() => {
 								window.location.reload();
