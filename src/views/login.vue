@@ -84,10 +84,12 @@ const submitForm = (formEl: FormInstance | undefined) => {
 							localStorage.setItem('menuAuth', res.data.data.menuAuthList);
 							localStorage.setItem('menu_info', JSON.stringify(res.data.data.menuInfoDtos));
 							localStorage.setItem('control_info', JSON.stringify(res.data.data.controlInfoDtos));
+							// 先刷下router
+							router;
 							router.push('/dashboard');
-							setTimeout(() => {
-								window.location.reload();
-							}, 50);
+							// setTimeout(() => {
+							// 	window.location.reload();
+							// }, 50);
 						} else {
 							localStorage.setItem('editAuth', 'false');
 							ElMessage.error('系统错误，请联系系统管理员！');
