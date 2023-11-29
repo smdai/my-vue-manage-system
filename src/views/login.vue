@@ -75,9 +75,6 @@ const submitForm = (formEl: FormInstance | undefined) => {
 					localStorage.setItem('ms_username', param.userName);
 					localStorage.setItem('token', 'Bearer ' + res.data.data.token);
 					localStorage.setItem('userId', res.data.data.userId);
-					// const keys = permiss.defaultList[param.userName == 'admin' ? 'admin' : 'user'];
-					// permiss.handleSet(keys);
-					// localStorage.setItem('ms_keys', JSON.stringify(keys));
 					getSession(localStorage.getItem('ms_username') || '').then(res => {
 						if (res.data.code === 200) {
 							localStorage.setItem('editAuth', res.data.data.editAuth);
@@ -85,11 +82,10 @@ const submitForm = (formEl: FormInstance | undefined) => {
 							localStorage.setItem('menu_info', JSON.stringify(res.data.data.menuInfoDtos));
 							localStorage.setItem('control_info', JSON.stringify(res.data.data.controlInfoDtos));
 							// 先刷下router
-							router;
 							router.push('/dashboard');
-							// setTimeout(() => {
-							// 	window.location.reload();
-							// }, 50);
+							setTimeout(() => {
+								window.location.reload();
+							}, 50);
 						} else {
 							localStorage.setItem('editAuth', 'false');
 							ElMessage.error('系统错误，请联系系统管理员！');

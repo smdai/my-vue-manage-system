@@ -8,7 +8,7 @@ function getRoutesFromLocalStorage() {
             path: '/',
             redirect: '/login'
         }, {
-            path: "/",
+            path: "/home",
             name: "Home",
             component: () => import("../views/home.vue"),
             children: parsedRoutes
