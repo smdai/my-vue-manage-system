@@ -15,7 +15,7 @@
 					style="height: 300px;border: 1px solid red;" />
 			</div>
 			<div class="button">
-				<el-button type="primary" :icon="Apple" @click="deal">执行</el-button>
+				<el-button type="primary" :icon="Apple" @click="deal" v-if="buttonVisiableMap.get('execute')">执行</el-button>
 				<div class="container">
 					<el-table :data="tableData" border class="table" ref="multipleTable"
 						header-cell-class-name="table-header">
@@ -34,7 +34,7 @@
 					style="width: 240px" multiple collapse-tags collapse-tags-tooltip :max-collapse-tags="3" />
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Apple" @click="excute">执行</el-button>
+				<el-button type="primary" :icon="Apple" @click="excute" v-if="buttonVisiableMap.get('groovytest')">执行</el-button>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				highlight-current-row>
@@ -61,6 +61,9 @@ import { testGroovy } from '../../api/groovytest';
 import { errorInfo } from '../../constants/error';
 import { queryAllData, executeParam } from '../../api/rulengparam';
 import { queryLibraries } from '../../api/codelibrary';
+import { getControlVisiableMap } from '../../method/common';
+let buttonVisiableMap = getControlVisiableMap(['groovytest','execute'])
+
 interface optionsItem {
 	value: String;
 	label: string;
