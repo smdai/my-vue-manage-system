@@ -85,7 +85,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 							router.push('/dashboard');
 							setTimeout(() => {
 								window.location.reload();
-							}, 50);
+							}, 200);
 						} else {
 							localStorage.setItem('editAuth', 'false');
 							ElMessage.error('系统错误，请联系系统管理员！');
