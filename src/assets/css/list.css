@@ -29,3 +29,13 @@
 	width: 40px;
 	height: 40px;
 }
+
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.center-buttons {
+    display: flex;
+    justify-content: center; /* 在主轴上居中 */
+}

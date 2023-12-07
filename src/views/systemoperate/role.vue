@@ -209,6 +209,7 @@ const handleSelectionChange = (val: relativeUsersItem[]) => {
 	multipleSelection.value = val;
 }
 const sourceAuthItemRef = ref();
+let currentRow: any = null;// 用于存储当前选中的行数据
 // 获取表格数据
 const getData = () => {
 	fetchData(
@@ -217,6 +218,7 @@ const getData = () => {
 		tableData.value = res.data.data;
 		pageTotal.value = res.data.total;
 	});
+	currentRow = null
 };
 getData();
 const delRelativeUsers = () => {
@@ -283,7 +285,6 @@ const add = () => {
 		form.updateTime = '',
 		insertOrUpdate.value = '1';
 };
-let currentRow: any = null;// 用于存储当前选中的行数据
 const handleRowClick = (row: []) => {
 	currentRow = row;
 	loadRoleAuthSourceTree();

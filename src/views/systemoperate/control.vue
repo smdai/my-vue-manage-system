@@ -173,6 +173,7 @@ const getData = () => {
 		tableData.value = res.data.data;
 		pageTotal.value = res.data.total;
 	});
+	currentRow = null
 };
 // 分页导航
 const handlePageChange = (val: number) => {

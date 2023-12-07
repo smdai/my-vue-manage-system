@@ -119,6 +119,7 @@ const getData = () => {
 		tableData.value = res.data.data;
 		pageTotal.value = res.data.total;
 	});
+	currentRow = null
 };
 getData();
 

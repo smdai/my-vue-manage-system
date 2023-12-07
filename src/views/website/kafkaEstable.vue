@@ -181,7 +181,7 @@ const query = reactive({
 });
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
-
+let currentRow: any = null;// 用于存储当前选中的行数据
 // 获取表格数据
 const getData = () => {
 	fetchData(
@@ -190,6 +190,7 @@ const getData = () => {
 		tableData.value = res.data.data;
 		pageTotal.value = res.data.total;
 	});
+	currentRow = null
 };
 // 获取数据字典
 const getDics = () => {
@@ -201,7 +202,7 @@ const getDics = () => {
 }
 getDics();
 getData();
-let currentRow: any = null;// 用于存储当前选中的行数据
+
 const handleRowClick = (row: []) => {
 	// 通过row-click事件获取当前点击的行数据
 	currentRow = row;
