@@ -23,13 +23,18 @@
         <div class="handle-box">
             <el-button type="primary" :icon="Plus" @click="add" v-if="buttonVisiableMap.get('openAiAdd')">新增</el-button>
             <el-button type="primary" :icon="Edit" @click="edit" v-if="buttonVisiableMap.get('openAiUpdate')">编辑</el-button>
+            <el-button type="primary" :icon="Edit" @click="view">查看</el-button>
             <el-button type="danger" :icon="Delete" @click="del" v-if="buttonVisiableMap.get('openAiDelete')">删除</el-button>
         </div>
         <el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
             @row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
             <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
             <el-table-column prop="account" label="OpenAi账号"></el-table-column>
-            <el-table-column prop="aiKey" label="密钥"></el-table-column>
+            <el-table-column prop="aiKey" label="密钥">
+                <template #default="scope">
+                    {{ maskKey(scope.row.aiKey) }}
+                </template>
+            </el-table-column>
             <!-- <el-table-column prop="inputUser" label="录入人id"></el-table-column> -->
             <el-table-column prop="inputTime" label="录入时间" width="200px"></el-table-column>
             <el-table-column prop="updateTime" label="更新时间" width="200px"></el-table-column>
@@ -39,7 +44,7 @@
                 :page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
         </div>
         <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" v-model="editVisible" width="40%">
+        <el-dialog :title="editTitle" v-model="editVisible" width="40%">
             <el-form :model="form" :rules="rules" ref="editForm" label-width="110px">
                 <el-form-item label="id" v-if="false">
                     <el-input v-model="form.id" disabled></el-input>
@@ -60,7 +65,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="editVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="saveEdit(editForm)">确 定</el-button>
+                    <el-button type="primary" @click="saveEdit(editForm)" v-if="editSaveButtonVisible">确 定</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -76,6 +81,8 @@ import { errorInfo } from '../../constants/error';
 import { getControlVisiableMap } from '../../method/common';
 let buttonVisiableMap = getControlVisiableMap(['openAiAdd', 'openAiUpdate', 'openAiDelete'])
 const editForm = ref<FormInstance>();
+const editTitle = ref();
+const editSaveButtonVisible = ref(false)
 const query = reactive({
     account: '',
     input_user: '',
@@ -113,6 +120,8 @@ const clearQuery = () => {
 };
 const add = () => {
     editVisible.value = true;
+    editTitle.value = '新增';
+    editSaveButtonVisible.value = true;
     form.id = '';
     form.account = '';
     form.password = ''
@@ -128,6 +137,18 @@ const edit = () => {
     Object.assign(form, currentRow);
     editVisible.value = true;
     insertOrUpdate.value = '2';
+    editTitle.value = '编辑';
+    editSaveButtonVisible.value = true;
+}
+const view = () => {
+    if (!currentRow) {
+        ElMessage.warning('请选择一条数据')
+        return
+    }
+    Object.assign(form, currentRow);
+    editVisible.value = true;
+    editTitle.value = '查看';
+    editSaveButtonVisible.value = false;
 }
 const del = () => {
     if (!currentRow) {
@@ -215,6 +236,15 @@ const getData = () => {
     currentRow = null
 };
 getData();
+const maskKey = (key: string) => {
+    // 将密钥中间的一部分替换为星号
+    if (key.length > 6) {
+        const visibleChars = 6; // 中间可见字符数
+        const maskedPart = '*'.repeat(key.length - visibleChars * 2);
+        return key.slice(0, visibleChars) + maskedPart + key.slice(-visibleChars);
+    }
+    return key;
+};
 </script>
 <style scoped>
 @import '../../assets/css/list.css';
