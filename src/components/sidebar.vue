@@ -26,12 +26,14 @@
 					</el-sub-menu>
 				</template>
 				<template v-else>
-					<el-menu-item :index="item.menuUrl" :key="item.menuUrl">
+					<template v-if="item.isVisible === '1'">
+						<el-menu-item :index="item.menuUrl" :key="item.menuUrl">
 						<el-icon>
 							<component :is="item.icon"></component>
 						</el-icon>
 						<template #title>{{ item.menuName }}</template>
 					</el-menu-item>
+					</template>
 				</template>
 			</template>
 		</el-menu>

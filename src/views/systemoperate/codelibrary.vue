@@ -383,6 +383,7 @@ const editLibrary = () => {
     libraryForm.itemCatalogName = currentLibraryRow.itemCatalogName;
     libraryForm.itemCode = currentLibraryRow.itemCode;
     libraryForm.itemName = currentLibraryRow.itemName;
+    libraryForm.sortNo = currentLibraryRow.sortNo;
     editLibraryVisible.value = true;
     libraryInsertOrUpdate.value = '2';
 }
