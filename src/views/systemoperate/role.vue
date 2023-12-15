@@ -270,6 +270,7 @@ const handleSearch = () => {
 // 重置操作
 const clearQuery = () => {
 	query.roleName = '';
+	query.status = '';
 	query.pageIndex = 1;
 	getData();
 };
