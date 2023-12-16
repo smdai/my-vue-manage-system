@@ -3,14 +3,14 @@
     <el-table-column :prop="prop" :label="label">
         <template #default="scope">
             <div :style="getStyle(scope.row[prop])">
-                {{ transformDics(dics[prop], scope.row[prop]) }}
+                {{ transformDics(dics[dicName]?dics[dicName]:dics[prop], scope.row[prop]) }}
             </div>
         </template>
     </el-table-column>
 </template>
   
 <script setup lang="ts">
-const props = defineProps(['prop', 'label', 'dics']);
+const props = defineProps(['prop', 'label', 'dics','dicName']);
 const transformDics = (dic: { key: string; value: string }[], key: string): string => {
     const item = dic.find(item => item.key === key);
     return item ? item.value : "";

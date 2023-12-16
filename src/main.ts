@@ -8,8 +8,8 @@ import router from './router'
 // import { usePermissStore } from './store/permiss'
 import 'element-plus/dist/index.css'
 import './assets/css/icon.css'
-
-
+import BztcDictSelect from './views/customcomponent/bztcdictselect.vue'
+import BztcDictColumn from './views/customcomponent/bztcdictcolumn.vue'
 const app = createApp(App)
 
 app.use(createPinia())
@@ -21,6 +21,9 @@ app.use(ElementPlus, {
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
+// 注册全局组件
+app.component('BztcDictSelect', BztcDictSelect);
+app.component('BztcDictColumn', BztcDictColumn);
 // 自定义权限指令
 // const permiss = usePermissStore()
 app.directive('permiss', {

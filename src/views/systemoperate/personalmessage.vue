@@ -29,7 +29,7 @@
                         v-if="buttonVisiableMap.get('messageEdit')">编辑</el-button>
                     <el-button type="danger" :icon="Delete" @click="del"
                         v-if="buttonVisiableMap.get('messageDelete')">删除</el-button>
-                        <el-button type="primary" :icon="Pointer" @click="pushMessage"
+                    <el-button type="primary" :icon="Pointer" @click="pushMessage"
                         v-if="buttonVisiableMap.get('pushMessage')">推送消息</el-button>
                 </div>
                 <el-table :data="messageTableData" border class="table" ref="multipleTable"
@@ -66,7 +66,7 @@
                         </span>
                     </template>
                 </el-dialog>
-                <RoleDialog v-model="roleDialogVisible" @confirm="handleRoleDialogConfirm" width="50%"/>
+                <RoleDialog v-model="roleDialogVisible" @confirm="handleRoleDialogConfirm" width="50%" />
             </el-aside>
             <el-main class="container">
                 <div class="handle-box">
@@ -80,7 +80,8 @@
                     <el-row :gutter="50" justify="center">
                         <el-col :span="20">
                             <el-form-item label="发送状态：">
-                                <el-input v-model="messageRoleQuery.sendStatus" placeholder="请选择发送状态"></el-input>
+                                <BztcDictSelect v-model="messageRoleQuery.sendStatus" prop="sendStatus"
+                                    placeholder="请选择发送状态" :dicDatas="dicDatas" dicName="SendStatus" />
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -92,12 +93,12 @@
                     </el-row>
                 </div>
                 <div class="handle-box">
-                    <el-button type="primary" :icon="Plus" @click="addMessageRole"
+                    <!-- <el-button type="primary" :icon="Plus" @click="addMessageRole"
                         v-if="buttonVisiableMap.get('messageRoleAdd')">新增</el-button>
                     <el-button type="primary" :icon="Edit" @click="editMessageRole"
                         v-if="buttonVisiableMap.get('messageRoleEdit')">编辑</el-button>
                     <el-button type="danger" :icon="Delete" @click="delMessageRole"
-                        v-if="buttonVisiableMap.get('messageRoleDelete')">删除</el-button>
+                        v-if="buttonVisiableMap.get('messageRoleDelete')">删除</el-button> -->
                 </div>
                 <el-table :data="messageRoleTableData" border class="table" ref="multipleTable"
                     header-cell-class-name="table-header" @row-click="handleMessageRoleRowClick"
@@ -105,7 +106,7 @@
                     <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                     <el-table-column prop="messageId" label="消息编号"></el-table-column>
                     <el-table-column prop="roleId" label="角色id"></el-table-column>
-                    <el-table-column prop="sendStatus" label="发送状态" width="100px"></el-table-column>
+                    <BztcDictColumn prop="sendStatus" label="发送状态" :dics="dicDatas" dicName="SendStatus" width="100px" />
                 </el-table>
                 <div class="pagination">
                     <el-pagination background layout="total, prev, pager, next" :current-page="messageRoleQuery.pageIndex"
@@ -141,13 +142,15 @@
 import RoleDialog from '../customcomponent/roledialog.vue';
 import { reactive, ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus, Switch ,Pointer} from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus, Switch, Pointer } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { errorInfo } from '../../constants/error';
 import { fetchMessageData, insertMessage, updateMessage, deleteMessage } from '../../api/personalmessage';
 import { fetchMessageRoleData, insertMessageRole, updateMessageRole, deleteMessageRole } from '../../api/messagerolerel';
+import queryDicDatas from "../../method/bztcdics";
+const { dicDatas } = queryDicDatas(['SendStatus']);
 import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['messageAdd', 'messageEdit', 'messageDelete', 'messageRoleAdd', 'messageRoleEdit', 'messageRoleDelete','pushMessage'])
+let buttonVisiableMap = getControlVisiableMap(['messageAdd', 'messageEdit', 'messageDelete', 'messageRoleAdd', 'messageRoleEdit', 'messageRoleDelete', 'pushMessage'])
 const messageQuery = reactive({
     messageHead: '',
     messageBody: '',
@@ -437,11 +440,30 @@ const saveMessageRoleEdit = (formEl: FormInstance | undefined) => {
         }
     });
 };
-const selectedRoleIds = ref<number[]>([]);
+
 // 处理确认事件，获取选中的 roleId
 const handleRoleDialogConfirm = (roleIds: number[]) => {
-  selectedRoleIds.value = roleIds;
-  roleDialogVisible.value = false;
+    interface requestInterface {
+        messageId: number;
+        roleIds: number[];
+    };
+    let request: requestInterface = reactive({
+        messageId: currentMessageRow.id, // 初始化对象属性
+        roleIds: roleIds,
+    });
+    insertMessageRole(
+        request
+    ).then(res => {
+        if (res.data.code === 200) {
+            ElMessage.success('新增成功');
+            roleDialogVisible.value = false;
+            getMessageRoleData()
+            getMessageRoleData()
+        } else {
+            ElMessage.error(res.data.message)
+        }
+    });
+
 };
 </script>
 <style scoped>

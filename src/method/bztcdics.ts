@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 import { queryLibraries } from '../api/codelibrary';
 
-const useDicDatas = (dicList: string[]) => {
+const queryDicDatas = (dicList: string[]) => {
     // 为 dics 提供初始值，确保它是一个具有字符串索引签名的对象
     const dicDatas = reactive<{ [key: string]: any }>({});
 
@@ -26,4 +26,4 @@ const useDicDatas = (dicList: string[]) => {
         dicDatas
     };
 };
-export default useDicDatas;
+export default queryDicDatas;
