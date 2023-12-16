@@ -29,7 +29,7 @@
                         v-if="buttonVisiableMap.get('messageEdit')">编辑</el-button>
                     <el-button type="danger" :icon="Delete" @click="del"
                         v-if="buttonVisiableMap.get('messageDelete')">删除</el-button>
-                        <el-button type="primary" :icon="Delete" @click="pushMessage"
+                        <el-button type="primary" :icon="Pointer" @click="pushMessage"
                         v-if="buttonVisiableMap.get('pushMessage')">推送消息</el-button>
                 </div>
                 <el-table :data="messageTableData" border class="table" ref="multipleTable"
@@ -66,7 +66,7 @@
                         </span>
                     </template>
                 </el-dialog>
-                <RoleDialog v-model="roleDialogVisible"/>
+                <RoleDialog v-model="roleDialogVisible" @confirm="handleRoleDialogConfirm" width="50%"/>
             </el-aside>
             <el-main class="container">
                 <div class="handle-box">
@@ -141,7 +141,7 @@
 import RoleDialog from '../customcomponent/roledialog.vue';
 import { reactive, ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus, Switch } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus, Switch ,Pointer} from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { errorInfo } from '../../constants/error';
 import { fetchMessageData, insertMessage, updateMessage, deleteMessage } from '../../api/personalmessage';
@@ -288,6 +288,10 @@ const saveMessageEdit = (formEl: FormInstance | undefined) => {
     });
 };
 const pushMessage = () => {
+    if (!currentMessageRow) {
+        ElMessage.warning('请选择一条数据')
+        return
+    }
     roleDialogVisible.value = true
 }
 // ------------------------------------------------------------------
@@ -432,6 +436,12 @@ const saveMessageRoleEdit = (formEl: FormInstance | undefined) => {
             editMessageRoleVisible.value = false;
         }
     });
+};
+const selectedRoleIds = ref<number[]>([]);
+// 处理确认事件，获取选中的 roleId
+const handleRoleDialogConfirm = (roleIds: number[]) => {
+  selectedRoleIds.value = roleIds;
+  roleDialogVisible.value = false;
 };
 </script>
 <style scoped>
