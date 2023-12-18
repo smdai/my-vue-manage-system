@@ -17,11 +17,9 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add" v-if="buttonVisiableMap.get('menuAdd')">新增</el-button>
-				<el-button type="primary" :icon="Edit" @click="handleEdit"
-					v-if="buttonVisiableMap.get('menuUpdate')">编辑</el-button>
-				<el-button type="danger" :icon="Delete" @click="handleDelete"
-					v-if="buttonVisiableMap.get('menuDelete')">删除</el-button>
+				<BztcButton type="primary" :icon="Plus" controlKey="menuAdd" @click="add" buttonName="新增" />
+				<BztcButton type="primary" :icon="Edit" controlKey="menuUpdate" @click="handleEdit" buttonName="编辑" />
+				<BztcButton type="danger" :icon="Delete" controlKey="menuDelete" @click="handleDelete" buttonName="删除" />
 			</div>
 
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
@@ -102,8 +100,6 @@ import { fetchData, insert, update, deleteData } from '../../api/menu';
 import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
 import { queryLibraries } from '../../api/codelibrary';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['menuAdd', 'menuUpdate', 'menuDelete'])
 interface TableItem {
 	menuId: number,
 	upMenuId: number,

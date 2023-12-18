@@ -21,10 +21,10 @@
             </el-row>
         </div>
         <div class="handle-box">
-            <el-button type="primary" :icon="Plus" @click="add" v-if="buttonVisiableMap.get('openAiAdd')">新增</el-button>
-            <el-button type="primary" :icon="Edit" @click="edit" v-if="buttonVisiableMap.get('openAiUpdate')">编辑</el-button>
-            <el-button type="primary" :icon="Edit" @click="view">查看</el-button>
-            <el-button type="danger" :icon="Delete" @click="del" v-if="buttonVisiableMap.get('openAiDelete')">删除</el-button>
+            <BztcButton type="primary" :icon="Plus" controlKey="openAiAdd" @click="add" buttonName="新增" />
+            <BztcButton type="primary" :icon="Edit" controlKey="openAiUpdate" @click="edit" buttonName="编辑" />
+            <el-button type="primary" :icon="View" @click="view">查看</el-button>
+            <BztcButton type="danger" :icon="Delete" controlKey="openAiDelete" @click="del" buttonName="删除" />
         </div>
         <el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
             @row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
@@ -73,13 +73,11 @@
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { Delete, Edit, Search, Plus, Switch } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus, Switch ,View} from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/openai';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage, ElMessageBox } from "element-plus";
 import { errorInfo } from '../../constants/error';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['openAiAdd', 'openAiUpdate', 'openAiDelete'])
 const editForm = ref<FormInstance>();
 const editTitle = ref();
 const editSaveButtonVisible = ref(false)

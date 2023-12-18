@@ -13,12 +13,9 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add"
-					v-if="buttonVisiableMap.get('musicWebsiteAdd')">新增</el-button>
-				<el-button type="primary" :icon="Edit" @click="handleEdit"
-					v-if="buttonVisiableMap.get('musicWebsiteUpdate')">编辑</el-button>
-				<el-button type="danger" :icon="Delete" @click="handleDelete"
-					v-if="buttonVisiableMap.get('musicWebsiteDelete')">删除</el-button>
+				<BztcButton type="primary" :icon="Plus" controlKey="musicWebsiteAdd" @click="add" buttonName="新增" />
+				<BztcButton type="primary" :icon="Edit" controlKey="musicWebsiteUpdate" @click="handleEdit" buttonName="编辑" />
+				<BztcButton type="danger" :icon="Delete" controlKey="musicWebsiteDelete" @click="handleDelete" buttonName="删除" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
@@ -68,8 +65,6 @@ import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/websiteapi';
 import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['musicWebsiteAdd', 'musicWebsiteUpdate', 'musicWebsiteDelete'])
 interface TableItem {
 	id: number;
 	websiteUrl: string;

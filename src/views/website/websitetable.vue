@@ -13,12 +13,9 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add"
-					v-if="buttonVisiableMap.get('commonWebsiteAdd')">新增</el-button>
-				<el-button type="primary" :icon="Edit" @click="handleEdit"
-					v-if="buttonVisiableMap.get('commonWebsiteUpdate')">编辑</el-button>
-				<el-button type="danger" :icon="Delete" @click="handleDelete"
-					v-if="buttonVisiableMap.get('commonWebsiteDelete')">删除</el-button>
+				<BztcButton type="primary" :icon="Plus" controlKey="commonWebsiteAdd" @click="add" buttonName="新增" />
+				<BztcButton type="primary" :icon="Edit" controlKey="commonWebsiteUpdate" @click="handleEdit" buttonName="编辑" />
+				<BztcButton type="danger" :icon="Delete" controlKey="commonWebsiteDelete" @click="handleDelete" buttonName="删除" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
@@ -66,10 +63,8 @@ import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/websiteapi';
-import { getControlVisiableMap } from '../../method/common';
 import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
-let buttonVisiableMap = getControlVisiableMap(['commonWebsiteAdd', 'commonWebsiteUpdate', 'commonWebsiteDelete'])
 interface TableItem {
 	id: number;
 	websiteUrl: string;

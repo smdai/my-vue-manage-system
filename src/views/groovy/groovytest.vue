@@ -15,7 +15,7 @@
 					style="height: 300px;border: 1px solid red;" />
 			</div>
 			<div class="button">
-				<el-button type="primary" :icon="Apple" @click="deal" v-if="buttonVisiableMap.get('execute')">执行</el-button>
+				<BztcButton type="primary" :icon="Apple" controlKey="execute" @click="deal" buttonName="执行" />
 				<div class="container">
 					<el-table :data="tableData" border class="table" ref="multipleTable"
 						header-cell-class-name="table-header">
@@ -34,7 +34,7 @@
 					style="width: 240px" multiple collapse-tags collapse-tags-tooltip :max-collapse-tags="3" />
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Apple" @click="excute" v-if="buttonVisiableMap.get('groovytest')">执行</el-button>
+				<BztcButton type="primary" :icon="Apple" controlKey="groovytest" @click="excute" buttonName="执行" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				highlight-current-row>
@@ -61,8 +61,6 @@ import { testGroovy } from '../../api/groovytest';
 import { errorInfo } from '../../constants/error';
 import { queryAllData, executeParam } from '../../api/rulengparam';
 import { queryLibraries } from '../../api/codelibrary';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['groovytest','execute'])
 
 interface optionsItem {
 	value: String;
@@ -90,7 +88,7 @@ const pageTotal = ref(0);
 // 获取表格数据
 const getData = () => {
 	// query.paramCodeList = Array.from(query.paramCodeList).join(',');
-	if(query.paramCodeList === null){
+	if (query.paramCodeList === null) {
 		ElMessage.error("请选择参数。");
 		return;
 	}

@@ -23,14 +23,10 @@
                     </el-row>
                 </div>
                 <div class="handle-box">
-                    <el-button type="primary" :icon="Plus" @click="add"
-                        v-if="buttonVisiableMap.get('messageAdd')">新增</el-button>
-                    <el-button type="primary" :icon="Edit" @click="edit"
-                        v-if="buttonVisiableMap.get('messageEdit')">编辑</el-button>
-                    <el-button type="danger" :icon="Delete" @click="del"
-                        v-if="buttonVisiableMap.get('messageDelete')">删除</el-button>
-                    <el-button type="primary" :icon="Pointer" @click="pushMessage"
-                        v-if="buttonVisiableMap.get('pushMessage')">推送消息</el-button>
+                    <BztcButton type="primary" :icon="Plus" controlKey="messageAdd" @click="add" buttonName="新增" />
+                    <BztcButton type="primary" :icon="Edit" controlKey="messageEdit" @click="edit" buttonName="编辑" />
+                    <BztcButton type="danger" :icon="Delete" controlKey="messageDelete" @click="del" buttonName="删除" />
+                    <BztcButton type="primary" :icon="Pointer" controlKey="pushMessage" @click="pushMessage" buttonName="推送消息" />
                 </div>
                 <el-table :data="messageTableData" border class="table" ref="multipleTable"
                     header-cell-class-name="table-header" @row-click="handleMessageRowClick"
@@ -149,8 +145,6 @@ import { fetchMessageData, insertMessage, updateMessage, deleteMessage } from '.
 import { fetchMessageRoleData, insertMessageRole, updateMessageRole, deleteMessageRole } from '../../api/messagerolerel';
 import queryDicDatas from "../../method/bztcdics";
 const { dicDatas } = queryDicDatas(['SendStatus']);
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['messageAdd', 'messageEdit', 'messageDelete', 'messageRoleAdd', 'messageRoleEdit', 'messageRoleDelete', 'pushMessage'])
 const messageQuery = reactive({
     messageHead: '',
     messageBody: '',

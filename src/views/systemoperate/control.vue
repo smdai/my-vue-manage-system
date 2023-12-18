@@ -35,12 +35,11 @@
 					</el-button>
 				</div>
 				<div class="handle-box">
-					<el-button type="primary" :icon="Plus" @click="add"
-						v-if="buttonVisiableMap.get('controlAdd')">新增</el-button>
-					<el-button type="primary" :icon="Edit" @click="handleEdit"
-						v-if="buttonVisiableMap.get('controlUpdate')">编辑</el-button>
-					<el-button type="danger" :icon="Delete" @click="handleDelete"
-						v-if="buttonVisiableMap.get('controlDelete')">删除</el-button>
+					<BztcButton type="primary" :icon="Plus" controlKey="controlAdd" @click="add" buttonName="新增" />
+					<BztcButton type="primary" :icon="Edit" controlKey="controlUpdate" @click="handleEdit"
+						buttonName="编辑" />
+					<BztcButton type="danger" :icon="Delete" controlKey="controlDelete" @click="handleDelete"
+						buttonName="删除" />
 				</div>
 
 				<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
@@ -118,8 +117,6 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { queryLibraries } from '../../api/codelibrary';
 import type { TabsPaneContext } from 'element-plus';
 import { nextTick } from 'vue-demi';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['controlAdd', 'controlUpdate', 'controlDelete'])
 interface TableItem {
 	id: number,
 	userName: string,

@@ -13,12 +13,9 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add"
-					v-if="buttonVisiableMap.get('vpnintranetWebsiteAdd')">新增</el-button>
-				<el-button type="primary" :icon="Edit" @click="handleEdit"
-					v-if="buttonVisiableMap.get('vpnintranetWebsiteUpdate')">编辑</el-button>
-				<el-button type="danger" :icon="Delete" @click="handleDelete"
-					v-if="buttonVisiableMap.get('vpnintranetWebsiteDelete')">删除</el-button>
+				<BztcButton type="primary" :icon="Plus" controlKey="vpnintranetWebsiteAdd" @click="add" buttonName="新增" />
+				<BztcButton type="primary" :icon="Edit" controlKey="vpnintranetWebsiteUpdate" @click="handleEdit" buttonName="编辑" />
+				<BztcButton type="danger" :icon="Delete" controlKey="vpnintranetWebsiteDelete" @click="handleDelete" buttonName="删除" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>

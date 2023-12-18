@@ -16,14 +16,12 @@
 					</el-button>
 				</div>
 				<div class="handle-box">
-					<el-button type="primary" :icon="Plus" @click="add"
-						v-if="buttonVisiableMap.get('roleAdd')">新增</el-button>
-					<el-button type="primary" :icon="Edit" @click="handleEdit"
-						v-if="buttonVisiableMap.get('roleUpdate')">编辑</el-button>
-					<el-button type="danger" :icon="Delete" @click="handleDelete"
-						v-if="buttonVisiableMap.get('roleDelete')">删除</el-button>
-					<el-button type="primary" :icon="Connection" @click="relativeUsers"
-						v-if="buttonVisiableMap.get('roleUser')">关联用户</el-button>
+					<BztcButton type="primary" :icon="Plus" controlKey="roleAdd" @click="add" buttonName="新增" />
+					<BztcButton type="primary" :icon="Edit" controlKey="roleUpdate" @click="handleEdit" buttonName="编辑" />
+					<BztcButton type="danger" :icon="Delete" controlKey="roleDelete" @click="handleDelete"
+						buttonName="删除" />
+					<BztcButton type="primary" :icon="Connection" controlKey="roleUser" @click="relativeUsers"
+						buttonName="关联用户" />
 				</div>
 
 				<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
@@ -68,10 +66,10 @@
 				<!-- 关联用户弹出框 -->
 				<el-dialog title="关联用户" v-model="relativeUsersVisible" width="40%">
 					<div class="handle-box">
-						<el-button type="primary" :icon="Plus" @click="addRelativeUsers"
-							v-if="buttonVisiableMap.get('roleUserListQuery')">添加</el-button>
-						<el-button type="danger" :icon="Minus" @click="delRelativeUsers"
-							v-if="buttonVisiableMap.get('roleUserDelete')">删除</el-button>
+						<BztcButton type="primary" :icon="Plus" controlKey="roleUserListQuery" @click="addRelativeUsers"
+							buttonName="添加" />
+						<BztcButton type="danger" :icon="Minus" controlKey="roleUserDelete" @click="delRelativeUsers"
+							buttonName="删除" />
 					</div>
 					<el-table :data="relativeUsersTableData" border class="table" ref="multipleTable"
 						header-cell-class-name="table-header" @selection-change="handlerelativeUsersSelectionChange">
@@ -97,8 +95,8 @@
 					<template #footer>
 						<span class="dialog-footer">
 							<el-button @click="addUsersVisible = false">取 消</el-button>
-							<el-button type="primary" @click="saveRelativeUsers"
-								v-if="buttonVisiableMap.get('roleUserAdd')">确 定</el-button>
+							<BztcButton type="primary" controlKey="roleUserAdd" @click="saveRelativeUsers"
+								buttonName="确 定" />
 						</span>
 					</template>
 					<div class="pagination">
@@ -113,9 +111,9 @@
 					<el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
 						<el-tab-pane label="资源权限" name="first">
 							<div class="handle-box">
-								<el-button type="primary" :icon="Plus" @click="saveRelativeAuthResource"
-									v-if="buttonVisiableMap.get('roleAuthSave') && saveRelaAuthSourcevisiable"
-									:loading="saveRelaAuthSourceLoading">保存</el-button>
+								<BztcButton type="primary" :icon="Plus" controlKey="roleAuthSave"
+									@click="saveRelativeAuthResource" v-if="saveRelaAuthSourcevisiable"
+									:loading="saveRelaAuthSourceLoading" buttonName="保存" />
 							</div>
 							<el-tree :data="sourceAuthData" @node-click="handleNodeClick" show-checkbox node-key="objectId"
 								ref="sourceAuthItemRef" default-expand-all v-slot="{ node, data }">
@@ -148,8 +146,6 @@ import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
 import { queryLibraries } from '../../api/codelibrary';
 import type { TabsPaneContext } from 'element-plus'
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['roleAdd', 'roleUpdate', 'roleDelete', 'roleUser', 'roleUserDelete', 'roleUserListQuery', 'roleUserListQuery', 'roleUserAdd', 'roleAuthSave'])
 interface TableItem {
 	roleId: number,
 	roleName: string,
@@ -542,4 +538,5 @@ const handleNodeClick = () => {
 	color: #6b778c;
 	font-size: 32px;
 	font-weight: 600;
-}</style>
+}
+</style>

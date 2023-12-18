@@ -10,6 +10,7 @@ import 'element-plus/dist/index.css'
 import './assets/css/icon.css'
 import BztcDictSelect from './views/customcomponent/bztcdictselect.vue'
 import BztcDictColumn from './views/customcomponent/bztcdictcolumn.vue'
+import BztcButton from './views/customcomponent/bztcbutton.vue';
 const app = createApp(App)
 
 app.use(createPinia())
@@ -24,6 +25,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 // 注册全局组件
 app.component('BztcDictSelect', BztcDictSelect);
 app.component('BztcDictColumn', BztcDictColumn);
+app.component('BztcButton', BztcButton);
 // 自定义权限指令
 // const permiss = usePermissStore()
 app.directive('permiss', {

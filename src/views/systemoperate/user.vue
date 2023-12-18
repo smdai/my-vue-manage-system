@@ -15,13 +15,10 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add" v-if="buttonVisiableMap.get('userAdd')">新增</el-button>
-				<el-button type="primary" :icon="Edit" @click="handleEdit"
-					v-if="buttonVisiableMap.get('userUpdate')">编辑</el-button>
-				<el-button type="danger" :icon="Delete" @click="handleDelete"
-					v-if="buttonVisiableMap.get('userDelete')">删除</el-button>
-				<el-button type="primary" :icon="Connection" @click="editRole"
-					v-if="buttonVisiableMap.get('userRoleListQuery')">关联角色</el-button>
+				<BztcButton type="primary" :icon="Plus" controlKey="userAdd" @click="add" buttonName="新增" />
+				<BztcButton type="primary" :icon="Edit" controlKey="userUpdate" @click="handleEdit" buttonName="编辑" />
+				<BztcButton type="danger" :icon="Delete" controlKey="userDelete" @click="handleDelete" buttonName="删除" />
+				<BztcButton type="primary" :icon="Connection" controlKey="userRoleListQuery" @click="editRole" buttonName="关联角色" />
 			</div>
 
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
@@ -67,10 +64,8 @@
 		<!-- 角色弹出框 -->
 		<el-dialog title="关联角色" v-model="roleVisible" width="40%">
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="addRole"
-					v-if="buttonVisiableMap.get('roleListQuery')">添加</el-button>
-				<el-button type="danger" :icon="Minus" @click="delRole"
-					v-if="buttonVisiableMap.get('userDeleteRole')">删除</el-button>
+				<BztcButton type="primary" :icon="Plus" controlKey="roleListQuery" @click="addRole" buttonName="添加" />
+				<BztcButton type="danger" :icon="Minus" controlKey="userDeleteRole" @click="delRole" buttonName="删除" />
 			</div>
 			<el-table :data="tableRoleData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@selection-change="handleRoleSelectionChange">
@@ -96,8 +91,7 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="addRoleVisible = false">取 消</el-button>
-					<el-button type="primary" @click="saveUserRole" v-if="buttonVisiableMap.get('userRoleAdd')">确
-						定</el-button>
+					<BztcButton type="primary" controlKey="userRoleAdd" @click="saveUserRole" buttonName="确定" />
 				</span>
 			</template>
 			<div class="pagination">
@@ -119,8 +113,6 @@ import { queryUserNoRoles } from '../../api/role';
 import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
 import { queryLibraries } from '../../api/codelibrary';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['userAdd', 'userUpdate', 'userDelete', 'userRoleListQuery', 'userDeleteRole', 'roleListQuery', 'userRoleAdd'])
 interface TableItem {
 	id: number,
 	userName: string,

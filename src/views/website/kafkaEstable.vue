@@ -20,12 +20,9 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add"
-					v-if="buttonVisiableMap.get('kafkaEsAdd')">新增</el-button>
-				<el-button type="primary" :icon="Edit" @click="handleEdit"
-					v-if="buttonVisiableMap.get('kafkaEsUpdate')">编辑</el-button>
-				<el-button type="danger" :icon="Delete" @click="handleDelete"
-					v-if="buttonVisiableMap.get('kafkaEsDelete')">删除</el-button>
+				<BztcButton type="primary" :icon="Plus" controlKey="kafkaEsAdd" @click="add" buttonName="新增" />
+				<BztcButton type="primary" :icon="Edit" controlKey="kafkaEsUpdate" @click="handleEdit" buttonName="编辑" />
+				<BztcButton type="danger" :icon="Delete" controlKey="kafkaEsDelete" @click="handleDelete" buttonName="删除" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
@@ -107,8 +104,6 @@ import { fetchData, insertEs, updateEs, deleteEs, insertEsByKafka } from '../../
 import { queryLibraries } from '../../api/codelibrary';
 import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['kafkaEsAdd', 'kafkaEsUpdate', 'kafkaEsDelete'])
 interface TableItem {
 	id: number;
 	name: string;

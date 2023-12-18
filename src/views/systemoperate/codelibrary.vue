@@ -23,12 +23,9 @@
                     </el-row>
                 </div>
                 <div class="handle-box">
-                    <el-button type="primary" :icon="Plus" @click="add"
-                        v-if="buttonVisiableMap.get('catalogAdd')">新增</el-button>
-                    <el-button type="primary" :icon="Edit" @click="edit"
-                        v-if="buttonVisiableMap.get('catalogEdit')">编辑</el-button>
-                    <el-button type="danger" :icon="Delete" @click="del"
-                        v-if="buttonVisiableMap.get('catalogDelete')">删除</el-button>
+                    <BztcButton type="primary" :icon="Plus" controlKey="catalogAdd" @click="add" buttonName="新增" />
+                    <BztcButton type="primary" :icon="Edit" controlKey="catalogEdit" @click="edit" buttonName="编辑" />
+                    <BztcButton type="danger" :icon="Delete" controlKey="catalogDelete" @click="del" buttonName="删除" />
                 </div>
 
                 <el-table :data="catalogTableData" border class="table" ref="multipleTable"
@@ -86,14 +83,11 @@
                     </el-row>
                 </div>
                 <div class="handle-box">
-                    <el-button type="primary" :icon="Plus" @click="addLibrary"
-                        v-if="buttonVisiableMap.get('libraryAdd')">新增</el-button>
-                    <el-button type="primary" :icon="Edit" @click="editLibrary"
-                        v-if="buttonVisiableMap.get('libraryEdit')">编辑</el-button>
-                    <el-button type="danger" :icon="Delete" @click="delLibrary"
-                        v-if="buttonVisiableMap.get('libraryDelete')">删除</el-button>
-                    <el-button type="primary" :icon="Refresh" @click="refresh"
-                        v-if="buttonVisiableMap.get('libraryRefresh')">刷新缓存</el-button>
+                    <BztcButton type="primary" :icon="Plus" controlKey="addLibrary" @click="add" buttonName="新增" />
+                    <BztcButton type="primary" :icon="Edit" controlKey="editLibrary" @click="edit" buttonName="编辑" />
+                    <BztcButton type="danger" :icon="Delete" controlKey="delLibrary" @click="del" buttonName="删除" />
+                    <BztcButton type="primary" :icon="Refresh" controlKey="libraryRefresh" @click="refresh"
+                        buttonName="刷新缓存" />
                 </div>
 
                 <el-table :data="libraryTableData" border class="table" ref="multipleTable"
@@ -150,8 +144,6 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { errorInfo } from '../../constants/error';
 import { fetchCatalogData, insertCatalog, updateCatalog, deleteCatalog } from '../../api/codecatalog';
 import { fetchLibraryData, insertLibrary, updateLibrary, deleteLibrary, refreshLibrary } from '../../api/codelibrary';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['catalogAdd', 'catalogEdit', 'catalogDelete', 'libraryAdd', 'libraryEdit', 'libraryDelete', 'libraryRefresh'])
 const catalogQuery = reactive({
     itemCatalogCode: '',
     itemCatalogName: '',

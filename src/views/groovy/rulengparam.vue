@@ -13,10 +13,12 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add" v-if="buttonVisiableMap.get('groovyParamAdd')">新增</el-button>
-				<el-button type="primary" :icon="View" @click="handleView"> 查看 </el-button>
-				<el-button type="primary" :icon="Edit" @click="handleEdit" v-if="buttonVisiableMap.get('groovyParamUpdate')"> 编辑 </el-button>
-				<el-button type="danger" :icon="Delete" @click="handleDelete" v-if="buttonVisiableMap.get('groovyParamDelete')"> 删除 </el-button>
+				<BztcButton type="primary" :icon="Plus" controlKey="groovyParamAdd" @click="add" buttonName="新增" />
+				<BztcButton type="primary" :icon="Edit" controlKey="groovyParamUpdate" @click="handleEdit"
+					buttonName="编辑" />
+				<el-button type="primary" :icon="View" @click="handleView">查看</el-button>
+				<BztcButton type="danger" :icon="Delete" controlKey="groovyParamDelete" @click="handleDelete"
+					buttonName="删除" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" highlight-current-row>
@@ -115,8 +117,6 @@ import { fetchData, insert, update, deleteData } from '../../api/rulengparam';
 import { errorInfo } from '../../constants/error';
 import { queryLibraries } from '../../api/codelibrary';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['groovyParamAdd', 'groovyParamUpdate', 'groovyParamDelete'])
 const paramSubClazzVisible = ref(false);
 const saveFlag = ref(true);
 const dics = reactive({

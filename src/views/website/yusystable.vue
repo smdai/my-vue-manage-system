@@ -13,12 +13,9 @@
 				</el-button>
 			</div>
 			<div class="handle-box">
-				<el-button type="primary" :icon="Plus" @click="add"
-					v-if="buttonVisiableMap.get('yusysWebsiteAdd')">新增</el-button>
-				<el-button type="primary" :icon="Edit" @click="handleEdit"
-					v-if="buttonVisiableMap.get('yusysWebsiteUpdate')">编辑</el-button>
-				<el-button type="danger" :icon="Delete" @click="handleDelete"
-					v-if="buttonVisiableMap.get('yusysWebsiteDelete')">删除</el-button>
+				<BztcButton type="primary" :icon="Plus" controlKey="yusysWebsiteAdd" @click="add" buttonName="新增" />
+				<BztcButton type="primary" :icon="Edit" controlKey="yusysWebsiteUpdate" @click="handleEdit" buttonName="编辑" />
+				<BztcButton type="danger" :icon="Delete" controlKey="yusysWebsiteDelete" @click="handleDelete" buttonName="删除" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
@@ -68,8 +65,6 @@ import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/websiteapi';
 import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['yusysWebsiteAdd', 'yusysWebsiteUpdate', 'yusysWebsiteDelete'])
 interface TableItem {
 	id: number;
 	websiteUrl: string;
@@ -151,7 +146,7 @@ const handlePageChange = (val: number) => {
 
 // 删除操作
 const handleDelete = () => {
-	if(!currentRow){
+	if (!currentRow) {
 		ElMessage.warning('请选择一条数据')
 		return
 	}
@@ -185,7 +180,7 @@ let form = reactive({
 	type: '02',
 });
 const handleEdit = () => {
-	if(!currentRow){
+	if (!currentRow) {
 		ElMessage.warning('请选择一条数据')
 		return
 	}
@@ -231,4 +226,6 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 
 </script>
 
-<style scoped>@import '../../assets/css/list.css'</style>
+<style scoped>
+@import '../../assets/css/list.css'
+</style>
