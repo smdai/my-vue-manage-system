@@ -26,7 +26,10 @@
                     <BztcButton type="primary" :icon="Plus" controlKey="messageAdd" @click="add" buttonName="新增" />
                     <BztcButton type="primary" :icon="Edit" controlKey="messageEdit" @click="edit" buttonName="编辑" />
                     <BztcButton type="danger" :icon="Delete" controlKey="messageDelete" @click="del" buttonName="删除" />
-                    <BztcButton type="primary" :icon="Pointer" controlKey="pushMessage" @click="pushMessage" buttonName="推送消息" />
+                    <BztcButton type="primary" :icon="Pointer" controlKey="pushMessage" @click="pushMessage"
+                        buttonName="推送消息" />
+                    <BztcButton type="danger" :icon="RefreshLeft" controlKey="cancelMessage" @click="cancel"
+                        buttonName="撤回消息" />
                 </div>
                 <el-table :data="messageTableData" border class="table" ref="multipleTable"
                     header-cell-class-name="table-header" @row-click="handleMessageRowClick"
@@ -138,10 +141,10 @@
 import RoleDialog from '../customcomponent/roledialog.vue';
 import { reactive, ref } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus, Switch, Pointer } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus, Switch, Pointer, RefreshLeft } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { errorInfo } from '../../constants/error';
-import { fetchMessageData, insertMessage, updateMessage, deleteMessage } from '../../api/personalmessage';
+import { fetchMessageData, insertMessage, updateMessage, deleteMessage, cancelMessage } from '../../api/personalmessage';
 import { fetchMessageRoleData, insertMessageRole } from '../../api/messagerolerel';
 import queryDicDatas from "../../method/bztcdics";
 const { dicDatas } = queryDicDatas(['SendStatus']);
@@ -224,6 +227,30 @@ const del = () => {
                 if (res.data.code === 200) {
                     ElMessage.success('删除成功');
                     getMessageData();
+                } else {
+                    ElMessage.error(errorInfo.deleteError)
+                }
+            });
+        })
+        .catch(() => { });
+}
+const cancel = () => {
+    if (!currentMessageRow) {
+        ElMessage.warning('请选择一条数据')
+        return
+    }
+    // 二次确认删除
+    ElMessageBox.confirm('确定要撤回吗？', '提示', {
+        type: 'warning'
+    })
+        .then(() => {
+            messageForm.id = currentMessageRow.id;
+            cancelMessage(
+                messageForm
+            ).then(res => {
+                if (res.data.code === 200) {
+                    ElMessage.success('撤回成功');
+                    getMessageRoleData();
                 } else {
                     ElMessage.error(errorInfo.deleteError)
                 }
@@ -396,7 +423,7 @@ const saveMessageRoleEdit = (formEl: FormInstance | undefined) => {
                     }
                 });
             } else if (messageRoleInsertOrUpdate.value === '2') {
-                
+
             }
             editMessageRoleVisible.value = false;
         }

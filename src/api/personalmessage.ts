@@ -27,3 +27,10 @@ export const deleteMessage = (params: object) => {
         method: 'post'
     });
 };
+export const cancelMessage = (params: object) => {
+    return request({
+        url: '/bztc-study01/api/personalmessageresource/cancel',
+        data: params,
+        method: 'post'
+    });
+};

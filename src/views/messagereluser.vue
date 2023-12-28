@@ -2,11 +2,12 @@
 	<div class="container" v-if="flag">
 		<el-tabs v-model="message" @tab-click="handleClick">
 			<el-tab-pane :label="`未读消息(${countData?.unreadCount})`" name="1">
-				<el-table :data="state.unread" :show-header="false" style="width: 100%">
+				<el-table :data="state.unread" :show-header="false" style="width: 100%" @row-click="handleRowClick">
+					<el-table-column prop="messageId" v-if="false"></el-table-column>
 					<el-table-column prop="messageHead" width="300"></el-table-column>
-					<el-table-column>
+					<el-table-column prop="messageBody" show-overflow-tooltip>
 						<template #default="scope">
-							<span class="message-title">{{ scope.row.messageBody }}</span>
+							<span style="font-weight: bold; color: rgb(47, 203, 234);">{{ scope.row.messageBody }}</span>
 						</template>
 					</el-table-column>
 					<el-table-column prop="noteTime" width="180"></el-table-column>
@@ -21,13 +22,10 @@
 			</el-tab-pane>
 			<el-tab-pane :label="`已读消息(${countData?.readCount})`" name="2">
 				<template v-if="message === '2'">
-					<el-table :data="state.unread" :show-header="false" style="width: 100%">
+					<el-table :data="state.unread" :show-header="false" style="width: 100%" @row-click="handleRowClick">
+						<el-table-column prop="messageId" v-if="false"></el-table-column>
 						<el-table-column prop="messageHead" width="300"></el-table-column>
-						<el-table-column>
-							<template #default="scope">
-								<span class="message-title">{{ scope.row.messageBody }}</span>
-							</template>
-						</el-table-column>
+						<el-table-column prop="messageBody" show-overflow-tooltip></el-table-column>
 						<el-table-column prop="noteTime" width="180"></el-table-column>
 					</el-table>
 					<div class="pagination">
@@ -42,13 +40,10 @@
 			</el-tab-pane>
 			<el-tab-pane :label="`回收站(${countData?.recycleCount})`" name="3">
 				<template v-if="message === '3'">
-					<el-table :data="state.unread" :show-header="false" style="width: 100%">
+					<el-table :data="state.unread" :show-header="false" style="width: 100%" @row-click="handleRowClick">
+						<el-table-column prop="messageId" v-if="false"></el-table-column>
 						<el-table-column prop="messageHead" width="300"></el-table-column>
-						<el-table-column>
-							<template #default="scope">
-								<span class="message-title">{{ scope.row.messageBody }}</span>
-							</template>
-						</el-table-column>
+						<el-table-column prop="messageBody" show-overflow-tooltip></el-table-column>
 						<el-table-column prop="noteTime" width="180"></el-table-column>
 					</el-table>
 					<div class="pagination">
@@ -61,6 +56,16 @@
 					</div>
 				</template>
 			</el-tab-pane>
+			<el-dialog title="详情" v-model="visible" width="40%">
+				<el-form :model="form" label-width="110px">
+					<el-input :autosize="{ minRows: 2, maxRows: 10 }" type="textarea" v-model="form.messageBody"></el-input>
+				</el-form>
+				<template #footer>
+					<span class="dialog-footer">
+						<el-button @click="confirm">确 定</el-button>
+					</span>
+				</template>
+			</el-dialog>
 		</el-tabs>
 	</div>
 </template>
@@ -69,7 +74,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import type { TabsPaneContext } from 'element-plus'
 import { ElMessage } from 'element-plus';
-import { fetchMessageUserData, selectOperateCountByUserId, changeAllStatus } from '../api/messageuserrel'
+import { fetchMessageUserData, selectOperateCountByUserId, changeAllStatus, updateOperateStatus } from '../api/messageuserrel'
 const flag = ref(false)
 const panelName = ref<string>('1')
 const query = reactive({
@@ -139,12 +144,36 @@ onMounted(() => {
 	queryCount();
 	getData(panelName.value)
 });
+const confirm = () => {
+	visible.value = false
+	if (panelName.value === '1') {
+		let request = {
+			operateStatus: '2',
+			messageId: form.messageId
+		};
+		updateOperateStatus(request).then(res => {
+			queryCount();
+			getData(panelName.value)
+		})
+	}
+}
+const visible = ref(false)
+interface TableItem {
+	messageBody: string,
+	messageId: string
+}
+let form = reactive({
+	messageBody: '',
+	messageId: ''
+});
+const handleRowClick = (row: TableItem) => {
+	form.messageBody = row.messageBody
+	form.messageId = row.messageId
+	visible.value = true
+}
 </script>
 
 <style>
-.message-title {
-	cursor: pointer;
-}
 
 .handle-row {
 	margin-top: 30px;

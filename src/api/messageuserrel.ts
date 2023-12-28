@@ -19,3 +19,10 @@ export const changeAllStatus = (params : object) => {
         method: 'post'
     });
 };
+export const updateOperateStatus = (params : object) => {
+    return request({
+        url: '/bztc-study01/api/messageuserrelresource/updateoperatestatus',
+        data: params,
+        method: 'post'
+    });
+};
