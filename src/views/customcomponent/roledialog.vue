@@ -1,5 +1,5 @@
 <template>
-	<el-dialog title="角色列表">
+	<el-dialog title="角色列表" :visible.sync="roleDialogVisible">
 		<div class="handle-box" width="100%">
 			<el-row :gutter="50" justify="center">
 				<el-col :span="10">
@@ -36,19 +36,21 @@
 		</div>
 		<template #footer>
 			<span class="dialog-footer">
-				<el-button type="primary" @click="handleConfirm">确 定</el-button>
+				<el-button type="primary" @click="handleConfirm" :loading="loading">确 定</el-button>
 			</span>
 		</template>
 	</el-dialog>
 </template>
 <script setup lang="ts" name="basetable">
-import { ref, reactive } from 'vue';
+import { ref, reactive,onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { fetchData } from '../../api/role';
 import { Search, Switch } from '@element-plus/icons-vue';
 import queryDicDatas from "../../method/bztcdics";
 const emits = defineEmits(['confirm']);
 const { dicDatas } = queryDicDatas(['status']);
+const roleDialogVisible = ref(false); // 控制 dialog 显示/隐藏的变量
+const loading = ref(false)
 interface TableItem {
 	roleId: number,
 	roleName: string,
@@ -67,7 +69,15 @@ const query = reactive({
 });
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
-
+const multipleTable = ref<any>(null); // Use any type for multipleTableRef
+const clearData = () => {
+	currentRow = null
+	selectedRoleIds.value = []
+	if (multipleTable.value) {
+		multipleTable.value.clearSelection();
+	}
+	loading.value = false
+}
 let currentRow: any = null;// 用于存储当前选中的行数据
 // 获取表格数据
 const getData = () => {
@@ -77,9 +87,8 @@ const getData = () => {
 		tableData.value = res.data.data;
 		pageTotal.value = res.data.total;
 	});
-	currentRow = null
 };
-getData();
+// getData();
 // 查询操作
 const handleSearch = () => {
 	query.pageIndex = 1;
@@ -112,10 +121,13 @@ const handleConfirm = () => {
 		ElMessage.warning('请选择一条数据')
 		return
 	}
+	loading.value = true
 	emits('confirm', selectedRoleIds.value);
+	setTimeout(() => {
+        clearData();
+      }, 3000);
 };
-
-
+getData()
 </script>
 <style scoped>
 @import '../../assets/css/list.css';

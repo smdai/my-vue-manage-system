@@ -13,17 +13,3 @@ export const insertMessageRole = (params: object) => {
         method: 'post'
     });
 };
-export const updateMessageRole = (params: object) => {
-    return request({
-        url: '/bztc-study01/api/messagerolerelresource/update',
-        data: params,
-        method: 'post'
-    });
-};
-export const deleteMessageRole = (params: object) => {
-    return request({
-        url: '/bztc-study01/api/messagerolerelresource/delete',
-        data: params,
-        method: 'post'
-    });
-};

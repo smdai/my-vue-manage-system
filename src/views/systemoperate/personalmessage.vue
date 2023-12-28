@@ -142,7 +142,7 @@ import { Delete, Edit, Search, Plus, Switch, Pointer } from '@element-plus/icons
 import type { FormInstance, FormRules } from 'element-plus';
 import { errorInfo } from '../../constants/error';
 import { fetchMessageData, insertMessage, updateMessage, deleteMessage } from '../../api/personalmessage';
-import { fetchMessageRoleData, insertMessageRole, updateMessageRole, deleteMessageRole } from '../../api/messagerolerel';
+import { fetchMessageRoleData, insertMessageRole } from '../../api/messagerolerel';
 import queryDicDatas from "../../method/bztcdics";
 const { dicDatas } = queryDicDatas(['SendStatus']);
 const messageQuery = reactive({
@@ -357,30 +357,7 @@ const editMessageRole = () => {
     editMessageRoleVisible.value = true;
     messageRoleInsertOrUpdate.value = '2';
 }
-const delMessageRole = () => {
-    if (!currentMessageRoleRow) {
-        ElMessage.warning('请选择一条数据')
-        return
-    }
-    // 二次确认删除
-    ElMessageBox.confirm('确定要删除吗？', '提示', {
-        type: 'warning'
-    })
-        .then(() => {
-            messageRoleForm.id = currentMessageRoleRow.id;
-            deleteMessageRole(
-                messageRoleForm
-            ).then(res => {
-                if (res.data.code === 200) {
-                    ElMessage.success('删除成功');
-                    getMessageRoleData()
-                } else {
-                    ElMessage.error(errorInfo.deleteError)
-                }
-            });
-        })
-        .catch(() => { });
-}
+
 const getMessageRoleData = () => {
     fetchMessageRoleData(
         JSON.stringify(messageRoleQuery)
@@ -419,16 +396,7 @@ const saveMessageRoleEdit = (formEl: FormInstance | undefined) => {
                     }
                 });
             } else if (messageRoleInsertOrUpdate.value === '2') {
-                updateMessageRole(
-                    messageRoleForm
-                ).then(res => {
-                    if (res.data.code === 200) {
-                        ElMessage.success('更新成功');
-                        getMessageRoleData()
-                    } else {
-                        ElMessage.error(errorInfo.updateError)
-                    }
-                });
+                
             }
             editMessageRoleVisible.value = false;
         }
@@ -449,15 +417,13 @@ const handleRoleDialogConfirm = (roleIds: number[]) => {
         request
     ).then(res => {
         if (res.data.code === 200) {
-            ElMessage.success('新增成功');
-            roleDialogVisible.value = false;
-            getMessageRoleData()
+            ElMessage.success('推送成功');
             getMessageRoleData()
         } else {
             ElMessage.error(res.data.message)
         }
     });
-
+    roleDialogVisible.value = false;
 };
 </script>
 <style scoped>

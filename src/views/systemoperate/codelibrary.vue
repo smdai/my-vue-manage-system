@@ -83,9 +83,9 @@
                     </el-row>
                 </div>
                 <div class="handle-box">
-                    <BztcButton type="primary" :icon="Plus" controlKey="addLibrary" @click="add" buttonName="新增" />
-                    <BztcButton type="primary" :icon="Edit" controlKey="editLibrary" @click="edit" buttonName="编辑" />
-                    <BztcButton type="danger" :icon="Delete" controlKey="delLibrary" @click="del" buttonName="删除" />
+                    <BztcButton type="primary" :icon="Plus" controlKey="libraryAdd" @click="addLibrary" buttonName="新增" />
+                    <BztcButton type="primary" :icon="Edit" controlKey="libraryEdit" @click="editLibrary" buttonName="编辑" />
+                    <BztcButton type="danger" :icon="Delete" controlKey="libraryDelete" @click="delLibrary" buttonName="删除" />
                     <BztcButton type="primary" :icon="Refresh" controlKey="libraryRefresh" @click="refresh"
                         buttonName="刷新缓存" />
                 </div>
