@@ -21,7 +21,6 @@
 				<div class="login-btn">
 					<el-button type="primary" @click="submitForm(login)">登录</el-button>
 				</div>
-				<!-- <p class="login-tips">Tips : 用户名和密码随便填。</p> -->
 			</el-form>
 		</div>
 	</div>
@@ -30,7 +29,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useTagsStore } from '../store/tags';
-// import { usePermissStore } from '../store/permiss';
 import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
@@ -38,6 +36,7 @@ import { Lock, User } from '@element-plus/icons-vue';
 import { userLogin } from '../api/login';
 import { getSession } from '../api/session';
 import md5 from 'js-md5';
+
 interface LoginInfo {
 	userName: string;
 	password: string;
@@ -59,10 +58,39 @@ const rules: FormRules = {
 	],
 	password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 };
-// const permiss = usePermissStore();
 const login = ref<FormInstance>();
+const modules = import.meta.glob(['./*.vue', './**/*.vue'])
+
+// 转换函数，将字符串转换为动态导入函数
+function transformComponent(componentPath: string) {
+	return modules[`./${componentPath}`]
+}
+// 递归解析vue路径
+function flattenRoutes(routeList: any[]): any[] {
+	const flattenedRoutes: any[] = [];
+	if (routeList) {
+		routeList.forEach(routeItem => {
+			const { menuUrl, menuName, componentUrl, subs } = routeItem;
+			const transComponentUrl = transformComponent(componentUrl);
+			const routeObject = {
+				path: "/" + menuUrl,
+				name: menuUrl,
+				meta: {
+					title: menuName
+				},
+				component: transComponentUrl
+			};
+			flattenedRoutes.push(routeObject);
+			if (subs && subs.length > 0) {
+				flattenedRoutes.push(...flattenRoutes(subs));
+			}
+		});
+	}
+	return flattenedRoutes;
+}
 
 const submitForm = (formEl: FormInstance | undefined) => {
+
 	if (!formEl) return;
 
 	formEl.validate((valid: boolean) => {
@@ -77,17 +105,18 @@ const submitForm = (formEl: FormInstance | undefined) => {
 					localStorage.setItem('userId', res.data.data.userId);
 					getSession(localStorage.getItem('ms_username') || '').then(res => {
 						if (res.data.code === 200) {
-							localStorage.setItem('editAuth', res.data.data.editAuth);
 							localStorage.setItem('menuAuth', res.data.data.menuAuthList);
 							localStorage.setItem('menu_info', JSON.stringify(res.data.data.menuInfoDtos));
 							localStorage.setItem('control_info', JSON.stringify(res.data.data.controlInfoDtos));
-							// 先刷下router
-							router.push('/dashboard');
-							setTimeout(() => {
-								window.location.reload();
-							}, 200);
+							//将自己权限的路由加进去
+							router.addRoute({
+								path: "/home",
+								name: "Home",
+								component: () => import("../views/home.vue"),
+								children: flattenRoutes(res.data.data.menuInfoDtos)
+							})
+							router.push('/dashboard')
 						} else {
-							localStorage.setItem('editAuth', 'false');
 							ElMessage.error('系统错误，请联系系统管理员！');
 							return false;
 						}
