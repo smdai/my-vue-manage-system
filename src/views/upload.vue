@@ -20,7 +20,7 @@
 		<div class="plugins-tips">
 			vue-cropperjs：一个封装了 cropperjs 的 Vue 组件。 访问地址：
 			<a href="https://github.com/Agontuk/vue-cropperjs" target="_blank">vue-cropperjs</a>。 示例请查看
-			<router-link to="/user">个人中心</router-link>
+			<router-link to="/personaluser">个人中心</router-link>
 		</div>
 	</div>
 </template>

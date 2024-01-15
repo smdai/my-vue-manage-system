@@ -35,3 +35,9 @@ export const queryUsersNoRoles = (params: string) => {
         method: 'get'
     });
 }
+export const selectById = () => {
+    return request({
+        url: '/bztc-study01/api/userinforesource/selectbyid',
+        method: 'get'
+    });
+}

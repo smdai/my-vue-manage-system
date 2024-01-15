@@ -48,10 +48,11 @@
 import { onMounted, ref } from 'vue';
 import { useSidebarStore } from '../store/sidebar';
 import { useRouter } from 'vue-router';
-import imgurl from '../assets/img/headImage.jpeg';
-import { selectOperateCountByUserId } from '../api/messageuserrel'
-const username: string | null = localStorage.getItem('ms_username');
 
+import { selectOperateCountByUserId } from '../api/messageuserrel'
+import { selectById } from '../api/user';
+const username: string | null = localStorage.getItem('ms_username');
+const imgurl = ref()
 const sidebar = useSidebarStore();
 // 侧边栏折叠
 const collapseChage = () => {
@@ -76,7 +77,15 @@ const queryCount = () => {
 		}
 	})
 }
+const selectAvatarUrl = () => {
+	selectById().then(res=> {
+		if(res.data.code === 200){
+			imgurl.value = res.data.data.avatarUrl
+		}
+	})
+}
 queryCount()
+selectAvatarUrl()
 // 用户名下拉菜单选择事件
 const router = useRouter();
 const handleCommand = (command: string) => {
@@ -87,7 +96,7 @@ const handleCommand = (command: string) => {
 		localStorage.removeItem('control_info');
 		router.push('/login');
 	} else if (command == 'user') {
-		router.push('/user');
+		router.push('/personaluser');
 	}
 };
 </script>
