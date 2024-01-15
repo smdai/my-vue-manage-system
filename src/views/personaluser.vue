@@ -29,10 +29,10 @@
 					</template>
 					<el-form :model="form" :rules="rules" ref="editForm" label-width="110px">
 						<el-form-item label="用户名" prop="userName">
-							<el-input v-model="form.userName" placeholder=""></el-input>
+							<el-input v-model="form.userName" placeholder="" disabled></el-input>
 						</el-form-item>
 						<el-form-item label="手机号" prop="phone">
-							<el-input v-model="form.phone"></el-input>
+							<el-input v-model="form.phone" disabled></el-input>
 						</el-form-item>
 						<el-form-item label="邮箱" prop="email">
 							<el-input v-model="form.email"></el-input>
@@ -65,8 +65,8 @@ import { reactive, ref } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
-import { selectById } from '../api/user';
-import { uploadImg } from '../api/uploadfile';
+import { selectById ,update} from '../api/user';
+import { uploadAvatarImg } from '../api/uploadfile';
 import { ElMessage } from 'element-plus'
 
 const rules: FormRules = {
@@ -79,6 +79,7 @@ const rules: FormRules = {
 };
 
 const form = reactive({
+	id:'',
 	userName: '',
 	phone: '',
 	email: '',
@@ -94,7 +95,15 @@ const selectUserInfo = () => {
 
 }
 selectUserInfo()
-const onSubmit = () => { };
+const onSubmit = () => {
+	update(form).then(res=>{
+		if(res.data.code === 200){
+			ElMessage.success("修改成功")
+		}else{
+			ElMessage.error("修改失败。")
+		}
+	})
+};
 
 const avatarImg = ref();
 const imgSrc = ref('');
@@ -110,12 +119,12 @@ const fileName = ref()
 const setImage = (e: any) => {
 	const file = ref(e.target.files[0]);
 	fileName.value = e.target.files[0].name
-	
+
 	if (!file.value.type.includes('image/')) {
 		ElMessage.error("请上传图片。")
 		return;
 	}
-	
+
 	if (file.value.size > 5 * 1024 * 1024) {
 		ElMessage.error("图片大小请勿超过5M。")
 		return;
@@ -141,13 +150,13 @@ const saveAvatar = () => {
 		ElMessage.error("请上传一张图片。")
 		return;
 	}
-	
+
 	// 将 Data URL 转为 Blob 对象
 	const croppedImageBlob = dataURLtoBlob(croppedImageData);
 
 	let param = new FormData(); //创建form对象 
-	param.append('file', croppedImageBlob,fileName.value);
-	uploadImg(param).then(res => {
+	param.append('file', croppedImageBlob, fileName.value);
+	uploadAvatarImg(param).then(res => {
 		if (res.data.code === 200) {
 			ElMessage.success("上传成功。")
 			selectUserInfo()
