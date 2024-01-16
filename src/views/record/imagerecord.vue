@@ -7,8 +7,8 @@
         <el-dialog title="选择图片" v-model="dialogVisible" append-to-body>
             <el-upload v-model:file-list="fileList" class="upload-demo"
                 action="/bztc-study01/api/fileresource/uploadrecordimg" :on-preview="handlePreview"
-                :on-remove="handleRemove" list-type="picture" multiple :headers="{ Authorization: token , userId: userId }"
-                :on-success="successHandle">
+                :on-remove="handleRemove" list-type="picture" multiple :headers="{ Authorization: token, userId: userId }"
+                :on-success="successHandle" accept="image/*">
                 <el-button type="primary">选择图片</el-button>
                 <template #tip>
                     <div class="el-upload__tip">
@@ -34,8 +34,8 @@
   
 <script lang="ts" setup>
 import { ref, reactive } from 'vue'
-import type { UploadProps, UploadUserFile } from 'element-plus'
-import { queryRecordImgByPage } from '../../api/imageinfo';
+import { ElMessage, type UploadProps, type UploadUserFile } from 'element-plus'
+import { queryRecordImgByPage,deleteRecordImg } from '../../api/imageinfo';
 
 const query = reactive({
     pageIndex: 0,
@@ -45,12 +45,12 @@ const pageTotal = ref(0);
 const count = ref(0)
 const selectRecordImgByPage = () => {
     queryRecordImgByPage(JSON.stringify(query)).then(res => {
-        
+
         urls.value = urls.value.concat(res.data.data);
-        
-		pageTotal.value = res.data.total;
+
+        pageTotal.value = res.data.total;
         count.value += res.data.data.length
-        if(res.data.data.length < query.pageSize){
+        if (res.data.data.length < query.pageSize) {
             disabled.value = true
         }
     })
@@ -59,8 +59,21 @@ const dialogVisible = ref(false)
 const fileList = ref<UploadUserFile[]>([])
 const token = localStorage.getItem('token')
 const userId = localStorage.getItem('userId')
+interface ApiResponse {
+    code: number;
+    data: number;
+}
 const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
-    console.log(uploadFile, uploadFiles)
+    let code = (uploadFile.response as ApiResponse)?.code;
+    let id = (uploadFile.response as ApiResponse)?.data
+    if(code === 200){
+        deleteRecordImg(id).then(res=>{
+            if(res.data.code === 200){
+                ElMessage.success('删除成功')
+                initImgRecord()
+            }
+        })
+    }
 }
 
 const handlePreview: UploadProps['onPreview'] = (file) => {
@@ -77,6 +90,9 @@ const upload = () => {
     fileList.value = []
 }
 const successHandle = () => {
+    initImgRecord()
+}
+const initImgRecord = () => {
     query.pageIndex = 1
     urls.value = []
     count.value = 0

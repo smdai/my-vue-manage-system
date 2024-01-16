@@ -7,3 +7,10 @@ export const queryRecordImgByPage = (params: string) => {
         method: 'get'
     });
 }
+export const deleteRecordImg = (id: number) => {
+    return request({
+        url: '/bztc-study01/api/imageinforesource/deleterecordimg',
+        data: id,
+        method: 'post'
+    });
+}
