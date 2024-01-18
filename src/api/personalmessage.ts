@@ -34,3 +34,16 @@ export const cancelMessage = (params: object) => {
         method: 'post'
     });
 };
+export const queryPhoneCode = (phone: string) => {
+    return request({
+        url: '/bztc-study01/api/personalmessageresource/getphonecode',
+        data: phone,
+        method: 'post'
+    });
+};
+export const queryCiBa = () => {
+    return request({
+        url: '/bztc-study01/api/personalmessageresource/getcibasentence',
+        method: 'get'
+    });
+};

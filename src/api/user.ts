@@ -41,3 +41,24 @@ export const selectById = () => {
         method: 'get'
     });
 }
+export const updatePhone = (params:object) => {
+    return request({
+        url: '/bztc-study01/api/userinforesource/updatephone',
+        data: params,
+        method: 'post'
+    });
+};
+export const changePW = (params: object) => {
+    return request({
+        url: '/bztc-study01/api/userinforesource/changepassword',
+        data: params,
+        method: 'post'
+    });
+};
+export const changePasswordByAdmin = (params: object) => {
+    return request({
+        url: '/bztc-study01/api/userinforesource/changepasswordbyadmin',
+        data: params,
+        method: 'post'
+    });
+};

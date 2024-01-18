@@ -18,7 +18,10 @@
 				<BztcButton type="primary" :icon="Plus" controlKey="userAdd" @click="add" buttonName="新增" />
 				<BztcButton type="primary" :icon="Edit" controlKey="userUpdate" @click="handleEdit" buttonName="编辑" />
 				<BztcButton type="danger" :icon="Delete" controlKey="userDelete" @click="handleDelete" buttonName="删除" />
-				<BztcButton type="primary" :icon="Connection" controlKey="userRoleListQuery" @click="editRole" buttonName="关联角色" />
+				<BztcButton type="primary" :icon="Connection" controlKey="userRoleListQuery" @click="editRole"
+					buttonName="关联角色" />
+				<BztcButton type="primary" :icon="RefreshRight" controlKey="changePasswordByAdmin" @click="changePWByAdmin"
+					buttonName="修改密码" />
 			</div>
 
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
@@ -100,19 +103,33 @@
 					@current-change="handleRolePageChange"></el-pagination>
 			</div>
 		</el-dialog>
+		<el-dialog title="修改密码" v-model="changePasswordVisible" width="40%">
+			<el-form :model="changePasswordForm" :rules="passwordRules" ref="editPasswordForm" label-width="80px">
+				<el-form-item label="新密码" prop="newPassword1">
+					<el-input v-model="changePasswordForm.newPassword1" type="password" placeholder=""></el-input>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="changePasswordVisible = false">取 消</el-button>
+					<el-button type="primary" @click="savePasswordEdit(editPasswordForm)">确 定</el-button>
+				</span>
+			</template>
+		</el-dialog>
 	</div>
 </template>
 
 <script setup lang="ts" name="basetable">
 import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus, Minus, Connection } from '@element-plus/icons-vue';
-import { fetchData, insert, update, deleteData } from '../../api/user';
+import { Delete, Edit, Search, Plus, Minus, Connection, RefreshRight } from '@element-plus/icons-vue';
+import { fetchData, insert, update, deleteData, changePasswordByAdmin } from '../../api/user';
 import { queryUserRole, insertUserRole, deleteUserRole } from '../../api/userrole';
 import { queryUserNoRoles } from '../../api/role';
 import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
 import { queryLibraries } from '../../api/codelibrary';
+import md5 from 'js-md5';
 interface TableItem {
 	id: number,
 	userName: string,
@@ -250,7 +267,7 @@ const addRole = () => {
 	getUserNoRoleData();
 }
 const delRole = () => {
-	if(multipleRoleSelection.value.length < 1){
+	if (multipleRoleSelection.value.length < 1) {
 		ElMessage.error('请选择一条数据。');
 		return;
 	}
@@ -386,6 +403,40 @@ const getStatusStyle = (status: string) => {
 		return { color: 'red' };
 	}
 	return {};
+}
+const changePWByAdmin = () => {
+	if (!currentRow) {
+		ElMessage.error('请选择一条数据。');
+		return;
+	}
+	changePasswordVisible.value = true;
+}
+const changePasswordVisible = ref(false)
+const changePasswordForm = reactive({
+	newPassword1: ''
+});
+const passwordRules = {
+	newPassword1: [
+		{ required: true, message: '请输入新密码', trigger: 'blur' },
+		{ min: 6, max: 20, message: '新密码长度为6-20个字符', trigger: 'blur' }
+	]
+};
+const editPasswordForm = ref<FormInstance>();
+const savePasswordEdit = (formEl: FormInstance | undefined) => {
+	if (!formEl) return;
+	formEl.validate((valid: boolean) => {
+		if (valid) {
+			let param = {userId:currentRow.id,newPassword: md5(changePasswordForm.newPassword1) }
+			changePasswordByAdmin(param).then(res => {
+				if (res.data.code === 200) {
+					ElMessage.success(res.data.message)
+					changePasswordVisible.value = false
+				} else {
+					ElMessage.error(res.data.message)
+				}
+			})
+		}
+	});
 }
 </script>
 
