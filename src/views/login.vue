@@ -4,14 +4,14 @@
 			<div class="ms-title">搬砖天才管理系统</div>
 			<el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
 				<el-form-item prop="userName">
-					<el-input v-model="param.userName" placeholder="userName">
+					<el-input v-model="param.userName" placeholder="请输入用户名">
 						<template #prepend>
 							<el-button :icon="User"></el-button>
 						</template>
 					</el-input>
 				</el-form-item>
 				<el-form-item prop="password">
-					<el-input type="password" placeholder="password" v-model="param.password"
+					<el-input type="password" placeholder="请输入密码" v-model="param.password"
 						@keyup.enter="submitForm(login)">
 						<template #prepend>
 							<el-button :icon="Lock"></el-button>
@@ -20,6 +20,9 @@
 				</el-form-item>
 				<div class="login-btn">
 					<el-button type="primary" @click="submitForm(login)">登录</el-button>
+				</div>
+				<div class="login-btn">
+					<el-button type="primary" @click="register">注册</el-button>
 				</div>
 			</el-form>
 		</div>
@@ -44,8 +47,8 @@ interface LoginInfo {
 
 const router = useRouter();
 const param = reactive<LoginInfo>({
-	userName: 'user',
-	password: 'user'
+	userName: '',
+	password: ''
 });
 
 const rules: FormRules = {
@@ -127,7 +130,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
 				}
 			});
 		} else {
-			ElMessage.error('登录失败，请联系系统管理员！');
+			ElMessage.error('请输入用户名或密码');
 			return false;
 		}
 	});
@@ -135,6 +138,10 @@ const submitForm = (formEl: FormInstance | undefined) => {
 
 const tags = useTagsStore();
 tags.clearTags();
+
+const register = () => {
+	router.push('/register')
+}
 </script>
 
 <style scoped>

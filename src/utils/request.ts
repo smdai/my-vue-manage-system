@@ -14,7 +14,7 @@ service.interceptors.request.use(
             const requestUrl = config.url;
             const token = localStorage.getItem('token');
             const userId = localStorage.getItem('userId');
-            if(requestUrl && !requestUrl?.endsWith('/login')){
+            if(requestUrl && !requestUrl?.endsWith('/login') && !requestUrl?.endsWith('/register')){
                 if (token && userId) {
                     config.headers['Authorization'] = token;
                     config.headers['userId'] = userId;

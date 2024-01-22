@@ -19,6 +19,13 @@ function getRoutesFromLocalStorage() {
             },
             component: () => import( /* webpackChunkName: "login" */ "../views/login.vue")
         }, {
+            path: "/register",
+            name: "register",
+            meta: {
+                title: '注册'
+            },
+            component: () => import( /* webpackChunkName: "register" */ "../views/register.vue")
+        }, {
             path: '/403',
             name: '403',
             meta: {
@@ -77,7 +84,7 @@ router.beforeEach((to, from, next) => {
     const role = localStorage.getItem('ms_username');
     const menuAuth = localStorage.getItem('menuAuth');
     const token = localStorage.getItem('token');
-    const passRoutes = ['403', '404', 'Login', 'Home', 'dashboard'];
+    const passRoutes = ['403', '404', 'Login', 'Home', 'dashboard','register'];
 
     if (to.name) {
         if (passRoutes.includes(to.name.toString())) {

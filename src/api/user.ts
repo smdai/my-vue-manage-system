@@ -62,3 +62,10 @@ export const changePasswordByAdmin = (params: object) => {
         method: 'post'
     });
 };
+export const userRegister = (params: object) => {
+    return request({
+        url: '/bztc-study01/api/userinforesource/register',
+        data: params,
+        method: 'post'
+    });
+};
