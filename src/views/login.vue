@@ -11,8 +11,7 @@
 					</el-input>
 				</el-form-item>
 				<el-form-item prop="password">
-					<el-input type="password" placeholder="请输入密码" v-model="param.password"
-						@keyup.enter="submitForm(login)">
+					<el-input type="password" placeholder="请输入密码" v-model="param.password" @keyup.enter="submitForm(login)">
 						<template #prepend>
 							<el-button :icon="Lock"></el-button>
 						</template>
@@ -25,6 +24,11 @@
 					<el-button type="primary" @click="register">注册</el-button>
 				</div>
 			</el-form>
+		</div>
+		<div class="background-container">
+			<footer class="ms-beian">
+				<a href="http://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">苏ICP备2024065721号</a>
+			</footer>
 		</div>
 	</div>
 </template>
@@ -173,6 +177,23 @@ const register = () => {
 	overflow: hidden;
 }
 
+.background-container {
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+}
+
+.ms-beian {
+	background-color: transparent;
+	/* 设置为透明 */
+	color: #fff;
+	text-align: center;
+	padding: 10px;
+	text-decoration: underline; /* 下划线样式，可根据需要调整 */
+}
+.ms-beian a:visited {
+  color: #fff; /* 设置已访问链接的颜色为白色 */
+}
 .ms-content {
 	padding: 30px 30px;
 }

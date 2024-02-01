@@ -13,6 +13,7 @@
 			</router-view>
 		</div>
 	</div>
+	<v-footer/>
 </template>
 <script setup lang="ts">
 import { useSidebarStore } from '../store/sidebar';
@@ -20,7 +21,7 @@ import { useTagsStore } from '../store/tags';
 import vHeader from '../components/header.vue';
 import vSidebar from '../components/sidebar.vue';
 import vTags from '../components/tags.vue';
-
+import vFooter from '../components/footer.vue';
 const sidebar = useSidebarStore();
 const tags = useTagsStore();
 </script>
