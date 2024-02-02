@@ -25,15 +25,12 @@
 				</div>
 			</el-form>
 		</div>
-		<div class="background-container">
-			<footer class="ms-beian">
-				<a href="http://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">苏ICP备2024065721号</a>
-			</footer>
-		</div>
+		<v-footer/>
 	</div>
 </template>
 
 <script setup lang="ts">
+import vFooter from '../components/footer.vue';
 import { ref, reactive } from 'vue';
 import { useTagsStore } from '../store/tags';
 import { useRouter } from 'vue-router';
@@ -177,23 +174,6 @@ const register = () => {
 	overflow: hidden;
 }
 
-.background-container {
-	position: absolute;
-	width: 100%;
-	bottom: 0;
-}
-
-.ms-beian {
-	background-color: transparent;
-	/* 设置为透明 */
-	color: #fff;
-	text-align: center;
-	padding: 10px;
-	text-decoration: underline; /* 下划线样式，可根据需要调整 */
-}
-.ms-beian a:visited {
-  color: #fff; /* 设置已访问链接的颜色为白色 */
-}
 .ms-content {
 	padding: 30px 30px;
 }
