@@ -330,7 +330,7 @@ interface menuItem {
 const menuData = ref<menuItem[]>([]);
 const activeName = ref('first')
 const handleClick = (tab: TabsPaneContext, event: Event) => {
-	console.log(tab, event)
+
 }
 const handleNodeClick = (item: menuItem) => {
 	form.menuId = item.menuId.toString()

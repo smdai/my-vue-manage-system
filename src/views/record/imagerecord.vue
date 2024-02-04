@@ -119,7 +119,7 @@ const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
 }
 
 const handlePreview: UploadProps['onPreview'] = (file) => {
-    console.log(file)
+
 }
 const urls = ref([]);
 const disabled = ref(false)
@@ -142,7 +142,6 @@ const initImgRecord = () => {
     selectRecordImgByPage()
 }
 const switchImg = (index: number) => {
-    console.log("index:", index);
     if (index === urls.value.length - 1) {
         load()
     }

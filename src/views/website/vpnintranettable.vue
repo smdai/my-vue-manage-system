@@ -16,6 +16,8 @@
 				<BztcButton type="primary" :icon="Plus" controlKey="vpnintranetWebsiteAdd" @click="add" buttonName="新增" />
 				<BztcButton type="primary" :icon="Edit" controlKey="vpnintranetWebsiteUpdate" @click="handleEdit" buttonName="编辑" />
 				<BztcButton type="danger" :icon="Delete" controlKey="vpnintranetWebsiteDelete" @click="handleDelete" buttonName="删除" />
+				<BztcButton type="primary" :icon="Grid" controlKey="vpnGenerateQrCode" @click="initQrCode"
+					buttonName="生成二维码" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
@@ -55,18 +57,18 @@
 				</span>
 			</template>
 		</el-dialog>
+		<QrCodeDialog v-model="qrcodeDialogVisible" :value="qrValue" width="20%" :size="300" />
 	</div>
 </template>
 
 <script setup lang="ts" name="basetable">
 import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus ,Grid} from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/websiteapi';
 import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
-import { getControlVisiableMap } from '../../method/common';
-let buttonVisiableMap = getControlVisiableMap(['vpnintranetWebsiteAdd', 'vpnintranetWebsiteUpdate', 'vpnintranetWebsiteDelete'])
+import QrCodeDialog from '../customcomponent/qrcodedialog.vue';
 interface TableItem {
 	id: number;
 	websiteUrl: string;
@@ -226,7 +228,16 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 	});
 
 };
-
+const qrcodeDialogVisible = ref(false)
+const qrValue = ref('')
+const initQrCode = () => {
+	if (!currentRow) {
+		ElMessage.warning('请选择一条数据')
+		return
+	}
+	qrValue.value = currentRow.websiteUrl
+	qrcodeDialogVisible.value = true
+}
 </script>
 
 <style scoped>

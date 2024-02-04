@@ -141,7 +141,7 @@ const isCustomerChange = () => {
 }
 const groovyVisiable = ref(true);
 const onModeChange = (value: string) => {
-	// console.log('value:', value)
+
 }
 const excute = () => {
 	getData();

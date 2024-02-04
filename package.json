@@ -25,9 +25,11 @@
   "devDependencies": {
     "@rollup/plugin-dynamic-import-vars": "^2.0.5",
     "@types/js-md5": "^0.4.3",
+    "@types/qrcode": "^1.5.5",
     "@vitejs/plugin-vue": "^3.0.0",
     "@vue/compiler-sfc": "^3.1.2",
     "js-md5": "^0.7.3",
+    "qrcode": "^1.5.3",
     "ts-loader": "^9.4.2",
     "typescript": "^4.9.5",
     "unplugin-auto-import": "^0.11.2",

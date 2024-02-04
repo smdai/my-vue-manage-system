@@ -11,6 +11,7 @@ import './assets/css/icon.css'
 import BztcDictSelect from './views/customcomponent/bztcdictselect.vue'
 import BztcDictColumn from './views/customcomponent/bztcdictcolumn.vue'
 import BztcButton from './views/customcomponent/bztcbutton.vue';
+import BztcQrCode from './views/customcomponent/qrcode.vue';
 const app = createApp(App)
 
 app.use(createPinia())
@@ -26,5 +27,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.component('BztcDictSelect', BztcDictSelect);
 app.component('BztcDictColumn', BztcDictColumn);
 app.component('BztcButton', BztcButton);
+app.component('BztcQrCode',BztcQrCode);
 
 app.mount('#app')

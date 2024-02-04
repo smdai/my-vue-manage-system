@@ -14,8 +14,12 @@
 			</div>
 			<div class="handle-box">
 				<BztcButton type="primary" :icon="Plus" controlKey="animationWebsiteAdd" @click="add" buttonName="新增" />
-				<BztcButton type="primary" :icon="Edit" controlKey="animationWebsiteUpdate" @click="handleEdit" buttonName="编辑" />
-				<BztcButton type="danger" :icon="Delete" controlKey="animationWebsiteDelete" @click="handleDelete" buttonName="删除" />
+				<BztcButton type="primary" :icon="Edit" controlKey="animationWebsiteUpdate" @click="handleEdit"
+					buttonName="编辑" />
+				<BztcButton type="danger" :icon="Delete" controlKey="animationWebsiteDelete" @click="handleDelete"
+					buttonName="删除" />
+				<BztcButton type="primary" :icon="Grid" controlKey="animationGenerateQrCode" @click="initQrCode"
+					buttonName="生成二维码" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
@@ -55,16 +59,18 @@
 				</span>
 			</template>
 		</el-dialog>
+		<QrCodeDialog v-model="qrcodeDialogVisible" :value="qrValue" width="20%" :size="300" />
 	</div>
 </template>
 
 <script setup lang="ts" name="basetable">
 import { ref, reactive, stop } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Delete, Edit, Search, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, Search, Plus, Grid } from '@element-plus/icons-vue';
 import { fetchData, insert, update, deleteData } from '../../api/websiteapi';
 import { errorInfo } from '../../constants/error';
 import type { FormInstance, FormRules } from 'element-plus';
+import QrCodeDialog from '../customcomponent/qrcodedialog.vue';
 interface TableItem {
 	id: number;
 	websiteUrl: string;
@@ -72,6 +78,7 @@ interface TableItem {
 	inputTime: string;
 	updateTime: string;
 }
+
 const rules: FormRules = {
 	websiteUrl: [
 		{
@@ -117,6 +124,7 @@ getData();
 const handleRowClick = (row: []) => {
 	// 通过row-click事件获取当前点击的行数据
 	currentRow = row;
+
 };
 // 查询操作
 const handleSearch = () => {
@@ -146,7 +154,7 @@ const handlePageChange = (val: number) => {
 
 // 删除操作
 const handleDelete = () => {
-	if(!currentRow){
+	if (!currentRow) {
 		ElMessage.warning('请选择一条数据')
 		return
 	}
@@ -181,7 +189,7 @@ let form = reactive({
 });
 ;
 const handleEdit = () => {
-	if(!currentRow){
+	if (!currentRow) {
 		ElMessage.warning('请选择一条数据')
 		return
 	}
@@ -224,7 +232,16 @@ const saveEdit = (formEl: FormInstance | undefined) => {
 	});
 
 };
-
+const qrcodeDialogVisible = ref(false)
+const qrValue = ref('')
+const initQrCode = () => {
+	if (!currentRow) {
+		ElMessage.warning('请选择一条数据')
+		return
+	}
+	qrValue.value = currentRow.websiteUrl
+	qrcodeDialogVisible.value = true
+}
 </script>
 
 <style scoped>

@@ -455,7 +455,7 @@ const getStatusStyle = (status: string) => {
 const activeName = ref('first')
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
-	console.log(tab, event)
+
 }
 // -----------------------------------------------------------------
 const transformAuthSourceData = ref(new Map())
