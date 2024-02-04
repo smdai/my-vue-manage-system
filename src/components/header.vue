@@ -14,10 +14,22 @@
 			<div class="header-user-con">
 				<!-- 消息中心 -->
 				<div class="btn-bell" @click="router.push('/messagereluser')">
-					<el-tooltip effect="dark" :content="countData?.unreadCount ? `有${countData?.unreadCount}条未读消息` : `消息中心`" placement="bottom">
+					<el-tooltip effect="dark" :content="countData?.unreadCount ? `有${countData?.unreadCount}条未读消息` : `消息中心`"
+						placement="bottom">
 						<i class="el-icon-lx-notice"></i>
 					</el-tooltip>
 					<span class="btn-bell-badge" v-if="countData?.unreadCount"></span>
+				</div>
+				<div>
+					<el-tooltip effect="dark" placement="bottom" raw-content>
+						<template #content>
+							<span><img style="width: 250px;" src="../assets/img/website-qr-code.png"
+									alt="搬砖天才网站二维码" /></span>
+						</template>
+						<el-icon color="#fff">
+							<Menu />
+						</el-icon>
+					</el-tooltip>
 				</div>
 				<!-- 用户头像 -->
 				<el-avatar class="user-avator" :size="30" :src="imgurl" />
@@ -78,8 +90,8 @@ const queryCount = () => {
 	})
 }
 const selectAvatarUrl = () => {
-	selectById().then(res=> {
-		if(res.data.code === 200){
+	selectById().then(res => {
+		if (res.data.code === 200) {
 			imgurl.value = res.data.data.avatarUrl
 		}
 	})
@@ -99,6 +111,13 @@ const handleCommand = (command: string) => {
 		router.push('/personaluser');
 	}
 };
+const tooltipVisible = ref(false)
+const handleMouseEnter = () => {
+	tooltipVisible.value = true;
+}
+const handleMouseLeave = () => {
+	tooltipVisible.value = false;
+}
 </script>
 <style scoped>
 .header {
@@ -187,4 +206,5 @@ const handleCommand = (command: string) => {
 
 .el-dropdown-menu__item {
 	text-align: center;
-}</style>
+}
+</style>

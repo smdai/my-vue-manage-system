@@ -1,7 +1,23 @@
 <template>
 	<div class="login-wrap">
 		<div class="ms-login">
-			<div class="ms-title">搬砖天才管理系统</div>
+			<div class="ms-title">
+				<div class="title-text">搬砖天才管理系统</div>
+				<div class="icon-container">
+					<el-tooltip effect="light" placement="right" raw-content >
+						<template #content>
+							<span>
+								<img style="width: 250px;" src="../assets/img/website-qr-code.png" alt="搬砖天才网站二维码" />
+							</span>
+						</template>
+						<el-icon color="#fff">
+							<Menu />
+						</el-icon>
+					</el-tooltip>
+				</div>
+			</div>
+
+
 			<el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
 				<el-form-item prop="userName">
 					<el-input v-model="param.userName" placeholder="请输入用户名">
@@ -25,7 +41,7 @@
 				</div>
 			</el-form>
 		</div>
-		<v-footer/>
+		<v-footer />
 	</div>
 </template>
 
@@ -161,6 +177,18 @@ const register = () => {
 	font-size: 20px;
 	color: #fff;
 	border-bottom: 1px solid #ddd;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.title-text {
+	flex-grow: 2;
+}
+
+.icon-container {
+	margin-left: -20px;
+	/* 调整图标与文本之间的间距，根据需要调整 */
 }
 
 .ms-login {
@@ -186,11 +214,5 @@ const register = () => {
 	width: 100%;
 	height: 36px;
 	margin-bottom: 10px;
-}
-
-.login-tips {
-	font-size: 12px;
-	line-height: 30px;
-	color: #fff;
 }
 </style>
