@@ -4,6 +4,5 @@
     </el-dialog>
 </template>
 <script setup lang="ts" name="basetable">
-import { defineProps } from 'vue'
 const props = defineProps(['value','size']);
 </script>

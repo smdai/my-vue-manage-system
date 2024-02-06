@@ -33,7 +33,7 @@
         <div v-if="imageViewModel === '01'" class="demo-image__lazy" v-infinite-scroll="load"
             :infinite-scroll-disabled="disabled">
             <el-backtop :right="100" :bottom="100" target=".demo-image__lazy" />
-            <el-image v-for="i in count" :key="i" :src="urls[i - 1]" lazy :preview-src-list="[urls[i - 1]]"
+            <el-image v-for="i in count" :key="i" :src="urls[i - 1].urlIndex" lazy :preview-src-list="[urls[i - 1].url]"
                 @switch="switchImg" :infinite="false" />
             <p style="text-align: center;" v-if="disabled">-----我是有底线的-----</p>
             <p style="text-align: center;" v-else>-----加载中-----</p>
@@ -46,19 +46,19 @@
                         <span>{{ i }}</span>
                     </div>
                     <div class="column">
-                        <el-image style="width: 100px; height: 100px" :src="urls[i - 1]" fit="scale-down"
-                            :preview-src-list="[urls[i - 1]]" />
+                        <el-image style="width: 100px; height: 100px" :src="urls[i - 1].urlIndex" fit="scale-down"
+                            :preview-src-list="[urls[i - 1].url]" />
                     </div>
                     <div class="column">
-                        <span>{{ getFileBasename(urls[i - 1]) }}</span>
+                        <span>{{ getFileBasename(urls[i - 1].url) }}</span>
                     </div>
                 </li>
             </ul>
         </div>
         <div v-else>
             <div class="image-grid">
-                <el-image v-for="(image, index) in urls" :key="index" :src="image" fit="cover" :preview-src-list="[image]"
-                    class="grid-item"></el-image>
+                <el-image v-for="(image, index) in urls" :key="index" :src="image.urlIndex" fit="cover" :preview-src-list="[image.url]"
+                    class="grid-item" @show="show"></el-image>
             </div>
             <div class="pagination">
                 <el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
@@ -75,7 +75,7 @@ import { ElMessage, type UploadProps, type UploadUserFile } from 'element-plus'
 import { queryRecordImgByPage, deleteRecordImg } from '../../api/imageinfo';
 import queryDicDatas from "../../method/bztcdics";
 const { dicDatas } = queryDicDatas(['ImageViewModel']);
-const imageViewModel = ref('01')
+const imageViewModel = ref('03')
 const query = reactive({
     pageIndex: 0,
     pageSize: 10
@@ -121,7 +121,11 @@ const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
 const handlePreview: UploadProps['onPreview'] = (file) => {
 
 }
-const urls = ref([]);
+interface urlObjInterface {
+    url: '';
+    urlIndex: '';
+}
+const urls = ref<urlObjInterface[]>([]);
 const disabled = ref(false)
 const load = () => {
     query.pageIndex += 1
@@ -150,11 +154,11 @@ const selectRecordImgByPage03 = () => {
     queryRecordImgByPage(JSON.stringify(query)).then(res => {
 
         urls.value = res.data.data;
-
         pageTotal.value = res.data.total;
 
     })
 }
+selectRecordImgByPage03()
 const modelChange = () => {
     if (imageViewModel.value === '03') {
         query.pageIndex = 1
@@ -170,6 +174,10 @@ const handlePageChange = (val: number) => {
     query.pageIndex = val;
     selectRecordImgByPage03()
 };
+const show = () => {
+    console.log("show()");
+    
+}
 </script>
   
 <style scoped>
