@@ -9,7 +9,7 @@
 				<Fold />
 			</el-icon>
 		</div>
-		<div class="logo">搬砖天才管理系统</div>
+		<div class="logo">搬砖天才</div>
 		<div class="header-right">
 			<div class="header-user-con">
 				<!-- 消息中心 -->
@@ -23,7 +23,7 @@
 				<div>
 					<el-tooltip effect="dark" placement="bottom" raw-content>
 						<template #content>
-							<span><img style="width: 250px;" src="../assets/img/website-qr-code.png"
+							<span><img style="width: 250px;" src="../assets/img/bztc-fun-qrcode.png"
 									alt="搬砖天才网站二维码" /></span>
 						</template>
 						<el-icon color="#fff">

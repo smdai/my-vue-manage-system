@@ -2,7 +2,7 @@
 	<div class="footer">
 		<span>CopyRight © 2013-{{ nowYear }} BZTC. All Rights Reserved. 搬砖天才 版权所有</span>
 		<span>
-			<a href="http://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">备案号：苏ICP备2024065721号</a>
+			<a href="http://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">备案号：苏ICP备2024065721号-2</a>
 		</span>
 	</div>
 </template>

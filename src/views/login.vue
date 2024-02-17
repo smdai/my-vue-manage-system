@@ -2,12 +2,12 @@
 	<div class="login-wrap">
 		<div class="ms-login">
 			<div class="ms-title">
-				<div class="title-text">搬砖天才管理系统</div>
+				<div class="title-text">搬砖天才</div>
 				<div class="icon-container">
 					<el-tooltip effect="light" placement="right" raw-content >
 						<template #content>
 							<span>
-								<img style="width: 250px;" src="../assets/img/website-qr-code.png" alt="搬砖天才网站二维码" />
+								<img style="width: 250px;" src="../assets/img/bztc-fun-qrcode.png" alt="搬砖天才网站二维码" />
 							</span>
 						</template>
 						<el-icon color="#fff">

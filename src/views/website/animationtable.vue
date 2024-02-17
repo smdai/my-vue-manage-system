@@ -19,7 +19,7 @@
 				<BztcButton type="danger" :icon="Delete" controlKey="animationWebsiteDelete" @click="handleDelete"
 					buttonName="删除" />
 				<BztcButton type="primary" :icon="Grid" controlKey="animationGenerateQrCode" @click="initQrCode"
-					buttonName="生成二维码" />
+					buttonName="二维码" />
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
 				@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
