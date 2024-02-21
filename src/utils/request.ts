@@ -45,7 +45,9 @@ service.interceptors.response.use(
     (error: AxiosError) => {
         console.log(error.response?.status);
         if(error.response?.status === 401){
-            ElMessage.error('登录超时或权限不足，请重新登录！');
+            ElMessage.error('权限不足，请尝试重新登录！');
+        }if(error.response?.status === 406){
+            ElMessage.error('登录超时，请重新登录！');
         }else{
             ElMessage.error('请重新登录！【'+error+'】');
         }
