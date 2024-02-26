@@ -23,8 +23,18 @@
 				<div>
 					<el-tooltip effect="dark" placement="bottom" raw-content>
 						<template #content>
-							<span><img style="width: 250px;" src="../assets/img/bztc-fun-qrcode.png"
-									alt="搬砖天才网站二维码" /></span>
+							<span>
+								<p class="tooltip-span-p">公众号</p>
+								<img style="width: 150px;" src="../assets/img/公众号二维码.jpg" alt="搬砖天才网站二维码" />
+							</span>
+							<span>
+								<p class="tooltip-span-p">微信小程序</p>
+								<img style="width: 150px;" src="../assets/img/小程序二维码.jpg" alt="搬砖天才网站二维码" />
+							</span>
+							<span>
+								<p class="tooltip-span-p">网站地址</p>
+								<img style="width: 150px;" src="../assets/img/bztc-fun-qrcode.png" alt="搬砖天才网站二维码" />
+							</span>
 						</template>
 						<el-icon color="#fff">
 							<Menu />
@@ -205,6 +215,10 @@ const handleMouseLeave = () => {
 }
 
 .el-dropdown-menu__item {
+	text-align: center;
+}
+
+.tooltip-span-p {
 	text-align: center;
 }
 </style>
