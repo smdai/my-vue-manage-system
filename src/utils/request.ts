@@ -14,13 +14,10 @@ service.interceptors.request.use(
             const requestUrl = config.url;
             const token = localStorage.getItem('token');
             const userId = localStorage.getItem('userId');
-            if(requestUrl && !requestUrl?.endsWith('/login') && !requestUrl?.endsWith('/register')){
+            if(requestUrl){
                 if (token && userId) {
                     config.headers['Authorization'] = token;
                     config.headers['userId'] = userId;
-                } else {
-                    ElMessage.error('请重新登录！【none token or userId】');
-                    return Promise.reject();
                 }
             }
         }
