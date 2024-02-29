@@ -14,12 +14,12 @@
 
         <el-dialog title="选择图片" v-model="dialogVisible" append-to-body>
             <el-upload v-model:file-list="fileList" class="upload-demo"
-                action="/bztc-study01/api/fileresource/uploadrecordimg" :on-preview="handlePreview"
+                action="/bztc-study01/api/fileresource/uploadrecordimg" :data="uploadData" :on-preview="handlePreview"
                 :on-remove="handleRemove" list-type="picture" multiple :headers="{ Authorization: token, userId: userId }"
                 :on-success="successHandle" accept="image/*">
                 <el-button type="primary">选择图片</el-button>
                 <template #tip>
-                    <div class="el-upload__tip">
+                    <div class="el-upload_tip">
                         图片大小请勿超过20M。
                     </div>
                 </template>
@@ -77,9 +77,13 @@ import queryDicDatas from "../../method/bztcdics";
 const { dicDatas } = queryDicDatas(['ImageViewModel']);
 const imageViewModel = ref('03')
 const query = reactive({
+    type:'dai',
     pageIndex: 0,
     pageSize: 10
 });
+const uploadData = {
+    type: 'dai'
+};
 const getFileBasename = (url: string) => {
     return url?.substring(url.lastIndexOf('/') + 1) || '';
 }
