@@ -9,7 +9,13 @@
 				<Fold />
 			</el-icon>
 		</div>
-		<div class="logo">搬砖天才</div>
+		<div class="logo">
+            <!-- 使用span包裹logo文字 -->
+            <span class="logo-text">
+                <img class="logo-img" src="../assets/img/小程序logo_透明背景.png" alt="搬砖天才">
+                搬砖天才
+            </span>
+        </div>
 		<div class="header-right">
 			<div class="header-user-con">
 				<!-- 消息中心 -->
@@ -154,6 +160,22 @@ const handleMouseLeave = () => {
 	width: 250px;
 	line-height: 70px;
 }
+
+.logo-text {
+    display: flex;
+    align-items: center;
+	font-size: 30px;
+}
+
+.logo-img {
+    width: 50px;
+    margin-right: 10px; /* 添加右侧间距 */
+    background-color: transparent !important; /* 设置背景透明 */
+    border: none !important; /* 移除边框 */
+    padding: 0 !important; /* 移除内边距 */
+}
+
+
 
 .header-right {
 	float: right;

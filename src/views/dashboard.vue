@@ -2,13 +2,14 @@
 	<div>
 		<div class="rightullidiv">
 			<img src="../assets/img/shouye.png" alt="" class="rightulliimg">
+			
 		</div>
+		<v-footer/>
 	</div>
-
 </template>
 
 <script setup lang="ts" name="dashboard">
-
+import vFooter from '../components/footer.vue';
 </script>
 
 <style scoped>
