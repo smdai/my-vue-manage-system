@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { pinyin } from "pinyin";
+import { pinyin } from 'pinyin';
 const inputText = ref('');
 const resultText = ref('');
 const toPinyin = () => {
