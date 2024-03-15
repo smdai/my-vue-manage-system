@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineComponent, ref, reactive } from 'vue';
+import { ref } from 'vue';
 
 const inputText = ref('')
 const qrCodeValue = ref('')
