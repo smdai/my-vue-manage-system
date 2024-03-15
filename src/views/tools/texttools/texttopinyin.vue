@@ -6,8 +6,8 @@
             </el-input>
         </div>
         <div class="middle-div">
-            <el-button class="generate-button" type="primary" @click="deDuplicate">
-                去重
+            <el-button class="generate-button" type="primary" @click="toPinyin">
+                转换
             </el-button>
         </div>
         <div class="right-div">
@@ -20,12 +20,12 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { pinyin } from "pinyin";
 const inputText = ref('');
 const resultText = ref('');
-const deDuplicate = () => {
-    let textArray = inputText.value.split('\n') // 将输入的文本按行切割成数组
-    let uniqueArray = [...new Set(textArray)] // 使用 Set 去除重复行，并转换为数组
-    resultText.value = uniqueArray.join('\n') // 将数组连接为文本
+const toPinyin = () => {
+    resultText.value =
+        pinyin(inputText.value)
 }
 </script>
 
