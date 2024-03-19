@@ -14,7 +14,7 @@
         </div>
         <div class="handle-body">
             <el-table :data="goldPriceTableData" border class="table" ref="multipleTable"
-                header-cell-class-name="table-header" stripe :header-cell-style="{color: '#333' }">
+                header-cell-class-name="table-header" stripe :header-cell-style="{ color: '#333' }">
                 <template v-if="query.goldTradingPlatform === 'shgold'">
                     <el-table-column prop="typename" label="品种名称" width="200" fixed></el-table-column>
                     <el-table-column prop="price" label="最新价" width="160"></el-table-column>
@@ -94,7 +94,7 @@ import { Search } from '@element-plus/icons-vue';
 import queryDicDatas from "../../../method/bztcdics";
 import { queryGoldPrice } from '../../../api/querytools';
 const { dicDatas } = queryDicDatas(['GoldTradingPlatform']);
-
+import { ElMessage } from 'element-plus';
 const query = reactive({
     goldTradingPlatform: ''
 });
@@ -127,6 +127,8 @@ const queryPrice = () => {
     queryGoldPrice(query.goldTradingPlatform).then((res) => {
         if (res.data.code === 200) {
             goldPriceTableData.value = res.data.data
+        } else {
+            ElMessage.error(res.data.message)
         }
     })
 }

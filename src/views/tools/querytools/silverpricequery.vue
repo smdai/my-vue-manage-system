@@ -66,7 +66,7 @@ import { Search } from '@element-plus/icons-vue';
 import queryDicDatas from "../../../method/bztcdics";
 import { querySilverPrice } from '../../../api/querytools';
 const { dicDatas } = queryDicDatas(['SilverTradingPlatform']);
-
+import { ElMessage } from 'element-plus';
 const query = reactive({
     silverTradingPlatform: ''
 });
@@ -94,6 +94,8 @@ const queryPrice = () => {
     querySilverPrice(query.silverTradingPlatform).then((res) => {
         if (res.data.code === 200) {
             silverPriceTableData.value = res.data.data
+        } else {
+            ElMessage.error(res.data.message)
         }
     })
 }

@@ -19,3 +19,10 @@ export const queryOilPrice = () => {
         method: 'get'
     });
 };
+export const queryGlobalIpAdress = (ip: string) => {
+    return request({
+        url: '/bztc-study01/api/wx/miniprogram/wxminiprogramtoolsone/queryglobalipaddress',
+        params: { ip: ip },
+        method: 'get'
+    });
+};

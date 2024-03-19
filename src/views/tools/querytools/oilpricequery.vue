@@ -2,7 +2,8 @@
     <div class="container">
         <div class="handle-body">
             <el-table :data="oilPriceTableData" border class="table" ref="multipleTable"
-                header-cell-class-name="table-header" stripe :header-cell-style="{ color: '#333' }" height="800" style="width: 100%">
+                header-cell-class-name="table-header" stripe :header-cell-style="{ color: '#333' }" height="800"
+                style="width: 100%" highlight-current-row="true">
                 <el-table-column prop="province" label="省份" width="100" fixed></el-table-column>
                 <el-table-column prop="0h" label="0号(柴油)" width="100"></el-table-column>
                 <el-table-column prop="89h" label="89号" width="100"></el-table-column>
@@ -20,6 +21,7 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { queryOilPrice } from '../../../api/querytools';
+import { ElMessage } from 'element-plus';
 interface OilPriceTableItem {
     province?: string;
     '0h'?: string;
@@ -39,11 +41,11 @@ const queryPrice = () => {
     queryOilPrice().then((res) => {
         if (res.data.code === 200) {
             oilPriceTableData.value = res.data.data
+        } else {
+            ElMessage.error(res.data.message)
         }
     })
 }
 queryPrice()
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>
