@@ -26,3 +26,10 @@ export const queryGlobalIpAdress = (ip: string) => {
         method: 'get'
     });
 };
+export const queryPhoneOwnerShip = (phoneNo: string) => {
+    return request({
+        url: '/bztc-study01/api/wx/miniprogram/wxminiprogramtoolsone/queryphoneownership',
+        params: { phoneNo: phoneNo },
+        method: 'get'
+    });
+};
