@@ -13,3 +13,9 @@ export const querySilverPrice = (type: string) => {
         method: 'get'
     });
 };
+export const queryOilPrice = () => {
+    return request({
+        url: '/bztc-study01/api/wx/miniprogram/wxminiprogramtoolsone/queryoilprice',
+        method: 'get'
+    });
+};
