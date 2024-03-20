@@ -33,3 +33,10 @@ export const queryPhoneOwnerShip = (phoneNo: string) => {
         method: 'get'
     });
 };
+export const queryConstellationFortune = (query: object) => {
+    return request({
+        url: '/bztc-study01/api/wx/miniprogram/wxminiprogramtoolsone/queryconstellationfortune',
+        params: query,
+        method: 'get'
+    });
+};
