@@ -29,12 +29,12 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ElMessage } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { Search } from '@element-plus/icons-vue';
 import queryDicDatas from "../../../method/bztcdics";
 import { queryConstellationFortune } from '../../../api/querytools';
 const { dicDatas } = queryDicDatas(['ConstellationFortuneType', 'ConstellationId']);
-import { ElMessage } from 'element-plus';
 const tableHead: Record<string, { name: string, column: string }[]> = {
     today: [{
         name: '星座名称',

@@ -61,12 +61,13 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { ElMessage } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { Search } from '@element-plus/icons-vue';
 import queryDicDatas from "../../../method/bztcdics";
 import { querySilverPrice } from '../../../api/querytools';
 const { dicDatas } = queryDicDatas(['SilverTradingPlatform']);
-import { ElMessage } from 'element-plus';
+
 const query = reactive({
     silverTradingPlatform: ''
 });
