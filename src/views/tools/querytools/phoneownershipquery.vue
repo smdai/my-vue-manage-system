@@ -11,15 +11,11 @@
             </el-row>
         </div>
         <div class="handle-body">
-            <el-table :data="phoneTableData" border class="table" ref="multipleTable"
-                header-cell-class-name="table-header" stripe :header-cell-style="{ color: '#333' }">
-                <el-table-column prop="phone" label="手机号" width="280"></el-table-column>
-                <el-table-column prop="province" label="省份" width="280"></el-table-column>
-                <el-table-column prop="city" label="城市" width="280"></el-table-column>
-                <el-table-column prop="isp" label="运营商" width="280"></el-table-column>
-                <el-table-column prop="areacode" label="区号" width="276"></el-table-column>
-
-            </el-table>
+            <el-descriptions border :column="1">
+                <el-descriptions-item v-for="(item, index) in tableHead" :label="item.name" :key="item.column">
+                    {{ phoneTableData[item.column] }}
+                </el-descriptions-item>
+            </el-descriptions>
         </div>
     </div>
 </template>
@@ -28,34 +24,58 @@ import { reactive, ref } from 'vue';
 import { Search } from '@element-plus/icons-vue';
 import { queryPhoneOwnerShip } from '../../../api/querytools';
 import { ElMessage } from 'element-plus';
-
+const tableHead = [{
+    name: '手机号',
+    column: 'phone'
+},
+{
+    name: '省份',
+    column: 'province',
+},
+{
+    name: '城市',
+    column: 'city'
+},
+{
+    name: '运营商',
+    column: 'isp'
+},
+{
+    name: '区号',
+    column: 'areacode'
+}
+]
 const query = reactive({
     phoneNo: ''
 });
-interface PhoneNumberItem {
-    phone?: string;
-    province?: string;
-    city?: string;
-    isp?: string;
-    areacode?: string;
-}
-
-
-
-const phoneTableData = ref<PhoneNumberItem[]>([]);
+const phoneTableData = ref<{ [key: string]: string | undefined }>({});
 const queryPhone = () => {
     queryPhoneOwnerShip(query.phoneNo).then((res) => {
         if (res.data.code === 200) {
-            phoneTableData.value.push(res.data.data)
+            phoneTableData.value = res.data.data
         } else {
             ElMessage.error(res.data.message)
         }
     })
 }
-
 </script>
 <style scoped>
+.container {
+    text-align: center;
+    /* 水平居中 */
+    width: 100%;
+    /* 可以是固定宽度或者占据父元素宽度 */
+}
+
+.handle-head {
+    margin-bottom: 20px;
+}
+
 .handle-body {
-    margin-top: 40px;
+    margin-top: 10px;
+    width: 50%;
+    /* 设置宽度为父元素的50% */
+    margin: 0 auto;
+
 }
 </style>
