@@ -42,8 +42,9 @@
 						buttonName="删除" />
 				</div>
 
-				<el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
-					@row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
+				<el-table :data="tableData" border class="table" ref="multipleTable"
+					header-cell-class-name="table-header" @row-click="handleRowClick" :current-row="currentRow"
+					highlight-current-row>
 					<el-table-column prop="controlId" label="ID" width="55" align="center"></el-table-column>
 					<el-table-column prop="controlKey" label="控制点key"></el-table-column>
 					<el-table-column prop="controlName" label="控制点名称"></el-table-column>
@@ -52,16 +53,19 @@
 					<el-table-column prop="status" label="状态">
 						<template #default="scope">
 							<div :style="getStatusStyle(scope.row.status)">{{ transformDics(dics.status,
-								scope.row.status) }}
+						scope.row.status) }}
 							</div>
 						</template>
 					</el-table-column>
 					<el-table-column prop="inputTime" label="录入时间"></el-table-column>
 					<el-table-column prop="updateTime" label="更新时间"></el-table-column>
+					<el-table-column prop="menuId" label="菜单id" v-if="false"></el-table-column>
+					<el-table-column prop="menuName" label="菜单名称" v-if="false"></el-table-column>
 				</el-table>
 				<div class="pagination">
 					<el-pagination background layout="total, prev, pager, next" :current-page="query.pageIndex"
-						:page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
+						:page-size="query.pageSize" :total="pageTotal"
+						@current-change="handlePageChange"></el-pagination>
 				</div>
 
 
@@ -119,6 +123,8 @@ import type { TabsPaneContext } from 'element-plus';
 import { nextTick } from 'vue-demi';
 interface TableItem {
 	id: number,
+	menuId:number,
+	menuName:string,
 	userName: string,
 	status: string,
 	inputUser: string,

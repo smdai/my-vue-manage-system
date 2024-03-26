@@ -7,6 +7,13 @@ export const fetchData = (params: string) => {
         method: 'get'
     });
 }
+export const selectByPage = (params: string) => {
+    return request({
+        url: '/bztc-study01/api/userinforesource/queryuserbypage',
+        params: { param: params },
+        method: 'get'
+    });
+}
 export const insert = (params: object) => {
     return request({
         url: '/bztc-study01/api/userinforesource/insert',

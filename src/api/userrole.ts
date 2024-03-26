@@ -42,3 +42,10 @@ export const deleteRoleUser = (params: object,roleId : string) => {
         method: 'post'
     });
 };
+export const isRelRole = (params: string) => {
+    return request({
+        url: '/bztc-study01/api/userroleresource/isrelrole',
+        params: { roleId: params },
+        method: 'get'
+    });
+}

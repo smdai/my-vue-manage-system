@@ -65,7 +65,7 @@
                         </span>
                     </template>
                 </el-dialog>
-                <RoleDialog v-model="roleDialogVisible" @confirm="handleRoleDialogConfirm" width="50%" />
+                <RoleDialog ref="roleDialogRef" @confirm="handleRoleDialogConfirm" width="50%" />
             </el-aside>
             <el-main class="container">
                 <div class="handle-box">
@@ -104,7 +104,8 @@
                     :current-row="currentMessageRoleRow" highlight-current-row>
                     <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                     <el-table-column prop="messageId" label="消息编号"></el-table-column>
-                    <el-table-column prop="roleId" label="角色id"></el-table-column>
+                    <el-table-column prop="roleId" label="角色id" v-if="false"></el-table-column>
+                    <el-table-column prop="roleName" label="角色名称" ></el-table-column>
                     <BztcDictColumn prop="sendStatus" label="发送状态" :dics="dicDatas" dicName="SendStatus" width="100px" />
                 </el-table>
                 <div class="pagination">
@@ -147,6 +148,7 @@ import { errorInfo } from '../../constants/error';
 import { fetchMessageData, insertMessage, updateMessage, deleteMessage, cancelMessage } from '../../api/personalmessage';
 import { fetchMessageRoleData, insertMessageRole } from '../../api/messagerolerel';
 import queryDicDatas from "../../method/bztcdics";
+const roleDialogRef = ref(null)
 const { dicDatas } = queryDicDatas(['SendStatus']);
 const messageQuery = reactive({
     messageHead: '',
@@ -154,7 +156,7 @@ const messageQuery = reactive({
     pageIndex: 1,
     pageSize: 10
 });
-const roleDialogVisible = ref(false)
+
 interface MessageTableItem {
     id: number;
     messageHead: string;
@@ -316,7 +318,7 @@ const pushMessage = () => {
         ElMessage.warning('请选择一条数据')
         return
     }
-    roleDialogVisible.value = true
+    (roleDialogRef.value! as { open: () => void }).open();
 }
 // ------------------------------------------------------------------
 const editMessageRoleForm = ref<FormInstance>();
@@ -450,7 +452,7 @@ const handleRoleDialogConfirm = (roleIds: number[]) => {
             ElMessage.error(res.data.message)
         }
     });
-    roleDialogVisible.value = false;
+    (roleDialogRef.value! as { close: () => void }).close();
 };
 </script>
 <style scoped>
