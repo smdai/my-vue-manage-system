@@ -26,9 +26,7 @@
         <el-table :data="tableData" border class="table" ref="multipleTable" header-cell-class-name="table-header"
             @row-click="handleRowClick" :current-row="currentRow" highlight-current-row>
             <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-            <!-- <el-table-column prop="roleId" label="申请角色"></el-table-column> -->
             <BztcDictColumn prop="roleId" label="申请角色" :dics="dicDatas" dicName="BztcRoles" />
-            <!-- <el-table-column prop="phaseNo" label="当前阶段号"></el-table-column> -->
             <BztcDictColumn prop="phaseNo" label="当前阶段" :dics="dicDatas" dicName="FlowPhase" />
             <el-table-column prop="applyInputTime" label="录入时间" width="200px"></el-table-column>
             <el-table-column prop="applyUpdateTime" label="更新时间" width="200px"></el-table-column>
@@ -38,8 +36,8 @@
                 :page-size="query.pageSize" :total="pageTotal" @current-change="handlePageChange"></el-pagination>
         </div>
         <!-- 编辑弹出框 -->
-        <el-dialog :title="editTitle" v-model="editVisible" width="40%">
-            <el-form :model="form" :rules="rules" ref="editForm" label-width="110px">
+        <el-dialog :title="editTitle" v-model="editVisible" width="30%">
+            <el-form :model="form" :rules="rules" ref="editForm" label-width="110px" :disabled="!editSaveButtonVisible">
                 <el-form-item label="id" v-if="false">
                     <el-input v-model="form.id" disabled></el-input>
                 </el-form-item>
@@ -58,6 +56,34 @@
                 </span>
             </template>
         </el-dialog>
+        <!-- 编辑弹出框 -->
+        <el-dialog v-model="viewVisible" width="1100px">
+            <el-tabs v-model="activeName" style="margin-top: -20px;" @tab-click="handleTabsClick">
+                <el-tab-pane label="详情" name="first">
+                    <el-form :model="form" :rules="rules" ref="editForm" label-width="110px"
+                        :disabled="!editSaveButtonVisible">
+                        <el-form-item label="id" v-if="false">
+                            <el-input v-model="form.id" disabled></el-input>
+                        </el-form-item>
+                        <el-form-item label="申请角色" prop="roleId">
+                            <BztcDictSelect v-model="form.roleId" prop="roleId" placeholder="请选择角色" :dicDatas="dicDatas"
+                                dicName="BztcRoles" />
+                        </el-form-item>
+                        <el-form-item label="备注" prop="remark">
+                            <el-input v-model="form.remark" type="textarea" :rows="6"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <span class="dialog-footer">
+                        <el-button @click="viewVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="saveEdit(editForm)" v-if="editSaveButtonVisible">确
+                            定</el-button>
+                    </span>
+                </el-tab-pane>
+                <el-tab-pane label="流程记录" name="second">
+                    <FlowTaskList :flowTaskParam="flowTaskParam" ref="flowTaskRef" />
+                </el-tab-pane>
+            </el-tabs>
+        </el-dialog>
         <FlowOpinionDialog ref="opinionDialogRef" :flowOpinionParam="flowOpinionParam"
             @confirm="handleOpinionDialogConfirm" />
     </div>
@@ -73,9 +99,10 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage, ElMessageBox } from "element-plus";
 import queryDicDatas from "../../method/bztcdics";
 import FlowOpinionDialog from '../customcomponent/flowopiniondialog.vue';
+import FlowTaskList from '../customcomponent/flowtasklist.vue';
 const { dicDatas } = queryDicDatas(['FlowPhase', 'BztcRoles']);
+const activeName = ref('first')
 const editForm = ref<FormInstance>();
-const editTitle = ref();
 const editSaveButtonVisible = ref(false)
 const opinionDialogRef = ref(null)
 const query = reactive({
@@ -84,6 +111,7 @@ const query = reactive({
     pageSize: 10
 });
 const editVisible = ref(false)
+const viewVisible = ref(false)
 const insertOrUpdate = ref('')
 let form = reactive({
     id: '',
@@ -97,6 +125,10 @@ let flowOpinionParam = reactive({
     objectNo: '',
     nextPhaseNo: '',
     nextApproveRole: ''
+})
+let flowTaskParam = reactive({
+    objectType: objectType.value,
+    objectNo: ''
 })
 const customValidateRoleId = (rule: any, value: any, callback: (error?: string | Error | undefined) => void) => {
     isRelRole(value)
@@ -133,6 +165,7 @@ const clearQuery = () => {
     query.pageIndex = 1;
     getData()
 };
+const editTitle = ref('')
 const add = () => {
     editVisible.value = true;
     editTitle.value = '新增';
@@ -153,15 +186,17 @@ const edit = () => {
     editTitle.value = '编辑';
     editSaveButtonVisible.value = true;
 }
+const flowTaskRef = ref(null)
 const view = () => {
     if (!currentRow) {
         ElMessage.warning('请选择一条数据')
         return
     }
     Object.assign(form, currentRow);
-    editVisible.value = true;
-    editTitle.value = '查看';
+    viewVisible.value = true;
     editSaveButtonVisible.value = false;
+    activeName.value = 'first'
+    flowTaskParam.objectNo = currentRow.id;
 }
 const del = () => {
     if (!currentRow) {
@@ -263,7 +298,7 @@ const submit = () => {
             flowOpinionParam.nextApproveRole = res.data.data.nextApproveRole;
             (opinionDialogRef.value! as { open: () => void }).open();
         } else {
-            ElMessage.error('查询流程信息失败。原因：'+res.data.message)
+            ElMessage.error('查询流程信息失败。原因：' + res.data.message)
         }
     });
 
@@ -271,8 +306,17 @@ const submit = () => {
 const handleOpinionDialogConfirm = () => {
     getData()
 }
-
+const handleTabsClick = (pane: any, ev: Event) => {
+    if(pane.props.name === 'second'){
+        (flowTaskRef.value! as { query: () => void }).query();
+    }
+}
 </script>
 <style scoped>
 @import '../../assets/css/list.css';
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+}
 </style>
